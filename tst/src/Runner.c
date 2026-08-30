@@ -6,6 +6,7 @@
 #include "stat/test_gaussian.h"
 #include <stdlib.h>
 #include "multilayer_perceptron/basic/test_basic.h"
+#include "multilayer_perceptron/training/test_training.h"
 
 int main(void) {
     setvbuf(stdout, NULL, _IONBF, 0);
@@ -13,7 +14,7 @@ int main(void) {
         perror("Error in setvbuf!");
         return errno;
     }
-    const int total = 26;
+    const int total = 32;
     int failures = 0;
     load_resources_dir();
     if (errno) {
@@ -40,6 +41,12 @@ int main(void) {
     basic_perceptron_suite(&failures);
      if (errno) {
         perror("Panic on perceptron basic functions!");
+        return 1;
+    }
+
+    training_suite(&failures);
+    if (errno) {
+        perror("Panic on perceptron training functions!");
         return 1;
     }
 

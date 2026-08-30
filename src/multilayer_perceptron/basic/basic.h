@@ -8,6 +8,7 @@
 #define NO_INCOMING_WEIGHTS -1
 typedef enum {SIGMOID, RELU, SOFTMAX, NONE} Activation;
 
+//Optimization: make a network into an array instead of a DLL
 typedef struct lay {
     struct lay *next;
     struct lay *prev;

@@ -13,7 +13,7 @@ int main(void) {
         perror("Error in setvbuf!");
         return errno;
     }
-    const int total = 28;
+    const int total = 26;
     int failures = 0;
     load_resources_dir();
     if (errno) {
@@ -33,7 +33,7 @@ int main(void) {
 
     gaussian_suite(&failures);
     if (errno) {
-        perror("Panic on gaussian functions!");
+        perror("Panic on Gaussian functions!");
         return 1;
     }
 

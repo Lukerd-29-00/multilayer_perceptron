@@ -121,9 +121,9 @@ Matrix *load_mat_from_file(char *file_name) {
     return NULL;
 }
 
-Vector *load_vec_from_file(char *file_name) {
+double *load_vec_from_file(char *file_name) {
     char path[MAX_PATH];
-    Vector *output = NULL;
+    double *output = NULL;
     FILE *resource = NULL;
 
     strcpy(path, linal_resources);
@@ -146,7 +146,10 @@ Vector *load_vec_from_file(char *file_name) {
         goto error;
     }
 
-    output = initialize_vec(dimensions);
+    output = malloc(sizeof(double) * dimensions);
+    if (output == NULL) {
+    	goto error;
+    }
 
     for (int i = 0;i < dimensions;i++) {
         double n;
@@ -157,7 +160,7 @@ Vector *load_vec_from_file(char *file_name) {
             errno = 450;
             goto error;
         } else {
-            output->values[i] = n;
+            output[i] = n;
         }
     }
 
@@ -168,49 +171,26 @@ Vector *load_vec_from_file(char *file_name) {
         fclose(resource);
     }
     if (output != NULL) {
-        destroy_vector(output);
+        free(output);
     }
     return NULL;
 }
 
-char *test_vector_init(void) {
-    Vector * const vec = initialize_vec(3);
-    char * error_message = assert_int_equals(3, vec->dimensions);
-    char * error_format = NULL;
-    if (error_message != NULL) {
-        error_format = "Error in test_vector_init; dimensions did not match: %s\n";
-        goto end;
-    } else if (errno) {
-        goto end;
-    }
-
-    end:
-        destroy_vector(vec);
-        if (error_format != NULL) {
-            char buf[MAX_LEN] = {};
-            snprintf(buf, MAX_LEN, error_format, error_message);
-            char *rich_message = build_error_message(buf);
-            free(error_message);
-            return rich_message;
-        }
-        return NULL;
-}
-
 char *test_vector_add(void) {
-    Vector * const a = initialize_vec(3);
-    Vector * const b = initialize_vec(3);
+    double a[3];
+    double b[3];
     
-    a->values[0] = 1.;
-    a->values[1] = 2.;
-    a->values[2] = 3.;
+    a[0] = 1.;
+    a[1] = 2.;
+    a[2] = 3.;
 
-    b->values[0] = -4.;
-    b->values[1] = 3.;
-    b->values[2] = -3.;
+    b[0] = -4.;
+    b[1] = 3.;
+    b[2] = -3.;
 
-    add(a, b);
+    add(a, b, 3);
     char *error_format = NULL;
-    char *error_message = assert_double_approx(-3., a->values[0], 0.01);
+    char *error_message = assert_double_approx(-3., a[0], 0.01);
 
     if (error_message != NULL) {
         error_format = "Error in test_vector_add x coordinate: %s\n";
@@ -219,7 +199,7 @@ char *test_vector_add(void) {
         goto end;
     }
 
-    error_message = assert_double_approx(5., a->values[1], 0.01);
+    error_message = assert_double_approx(5., a[1], 0.01);
     if (error_message != NULL) {
         error_format = "Error in test_vector_add y coordinate: %s\n";
         goto end;
@@ -227,7 +207,7 @@ char *test_vector_add(void) {
         goto end;
     }
 
-    error_message = assert_double_approx(0., a->values[2], 0.01);
+    error_message = assert_double_approx(0., a[2], 0.01);
     if (error_message != NULL) {
         error_format = "Error in test_vector_add z coordinate: %s\n";
         goto end;
@@ -236,8 +216,6 @@ char *test_vector_add(void) {
     }
 
     end:
-        destroy_vector(a);
-        destroy_vector(b);
         if (error_format != NULL) {
             char buf[MAX_LEN] = {};
             snprintf(buf, MAX_LEN, error_format, error_message);
@@ -248,18 +226,22 @@ char *test_vector_add(void) {
         return NULL;
 }
 
-char *test_transform(Vector *restrict vec, Matrix *mat, Vector *restrict expected_output) {
-    Vector * const output = initialize_vec(expected_output->dimensions);
+char *test_transform(double *vec, Matrix *mat, double *expected_output) {
+    double * const output = malloc(sizeof(double) * mat->height);
     transform(mat, vec, output);
+    char *error_message = NULL;
+
+    for (int i = 0; i < mat->height; i++) {
+    	ASSERT_DOUBLE(expected_output[i], output[i], 0.01, "transform test");
+    }
     
-    char * message = assert_vector_equals(expected_output, output, 0.01);
-    destroy_vector(output);
-    return message;
+    free(output);
+    return NULL;
 }
 
 char *test_transform_3x3(void) {
-    Vector * input_vector = NULL;
-    Vector *expected_output = NULL;
+    double * input_vector = NULL;
+    double *expected_output = NULL;
     Matrix *transformation = NULL;
     if ((input_vector = load_vec_from_file("transform_me.txt")) == NULL) 
         goto error;
@@ -280,17 +262,17 @@ char *test_transform_3x3(void) {
         test_result = build_error_message(buf);
     }
 
-    destroy_vector(input_vector);
-    destroy_vector(expected_output);
+    free(input_vector);
+    free(expected_output);
     destroy_matrix(transformation);
     return test_result;
 
     error:
     if (input_vector != NULL) {
-        destroy_vector(input_vector);
+        free(input_vector);
     }
     if (expected_output != NULL) {
-        destroy_vector(expected_output);
+        free(expected_output);
     }
     if (transformation != NULL) {
         destroy_matrix(transformation);
@@ -300,8 +282,8 @@ char *test_transform_3x3(void) {
 }
 
 char *test_transform_3x2(void) {
-    Vector * input_vector = NULL;
-    Vector *expected_output = NULL;
+    double * input_vector = NULL;
+    double *expected_output = NULL;
     Matrix *transformation = NULL;
     if ((input_vector = load_vec_from_file("transform_me_2d.txt")) == NULL) 
         goto error;
@@ -322,17 +304,17 @@ char *test_transform_3x2(void) {
         test_result = build_error_message(buf);
     }
 
-    destroy_vector(input_vector);
-    destroy_vector(expected_output);
+    free(input_vector);
+    free(expected_output);
     destroy_matrix(transformation);
     return test_result;
 
     error:
     if (input_vector != NULL) {
-        destroy_vector(input_vector);
+        free(input_vector);
     }
     if (expected_output != NULL) {
-        destroy_vector(expected_output);
+        free(expected_output);
     }
     if (transformation != NULL) {
         destroy_matrix(transformation);
@@ -341,10 +323,10 @@ char *test_transform_3x2(void) {
 }
 
 char *test_transform_2x3(void) {
-    Vector * input_vector = NULL;
-    Vector *expected_output = NULL;
+    double * input_vector = NULL;
+    double *expected_output = NULL;
     Matrix *transformation = NULL;
-    if ((input_vector = load_vec_from_file("transform_me_2d.txt")) == NULL) 
+    if ((input_vector = load_vec_from_file("transform_me.txt")) == NULL) 
         goto error;
    
     if ((expected_output = load_vec_from_file("2x3/expected_output_2x3.txt")) == NULL)
@@ -363,17 +345,17 @@ char *test_transform_2x3(void) {
         test_result = build_error_message(buf);
     }
 
-    destroy_vector(input_vector);
-    destroy_vector(expected_output);
+    free(input_vector);
+    free(expected_output);
     destroy_matrix(transformation);
     return test_result;
 
     error:
     if (input_vector != NULL) {
-        destroy_vector(input_vector);
+        free(input_vector);
     }
     if (expected_output != NULL) {
-        destroy_vector(expected_output);
+        free(expected_output);
     }
     if (transformation != NULL) {
         destroy_matrix(transformation);

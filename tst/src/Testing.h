@@ -87,8 +87,6 @@ int join_path(char * restrict const root, const char * restrict const stem);
 
 int read_line(char * const buf, FILE * const stream, const int maxlen);
 
-char *assert_vector_equals(const Vector * const restrict expected, const Vector * const restrict actual, const double error);
-
 char *enrich_error_message(char * restrict const error_message, const char * restrict const method_name);
 
 char *assert_double_ge(const double expected, const double actual);

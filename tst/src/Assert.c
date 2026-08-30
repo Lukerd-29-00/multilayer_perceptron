@@ -60,28 +60,6 @@ char * assert_array_equals(const void * const restrict a, const void * const res
     return NULL;
 }
 
-char *assert_vector_equals(const Vector * const restrict expected, const Vector * const restrict actual, const double error) {
-    char * error_message = assert_int_equals(expected->dimensions, actual->dimensions);
-    char buf[MAX_LEN];
-    if (error_message != NULL) {
-        strcpy(buf, "vector dimension mismatch: ");
-        strcat(buf, error_message);
-        free(error_message);
-        return build_error_message(buf);
-    }
-
-    for (int i = 0;i < expected->dimensions; i++) {
-        error_message = assert_double_approx(expected->values[i], actual->values[i], error);
-        if (error_message != NULL) {
-            snprintf(buf, MAX_LEN, "Mismatch on vectors at index %d: ", i);
-            strcat(buf, error_message);
-            free(error_message);
-            return build_error_message(buf);
-        }
-    }
-    return NULL;
-}
-
 char *assert_activation_equals(Activation expected, Activation actual) {
      if (actual != expected) {
         char buf[MAX_LEN] = {};
@@ -112,7 +90,7 @@ char *assert_double_le(const double expected, const double actual) {
 char *assert_nan(const double actual) {
     char buf[MAX_LEN];
     if (!isnan(actual)) {
-        snprintf(buf, MAX_LEN, "Error: got %.2f instead of NaN");
+        snprintf(buf, MAX_LEN, "Error: got %.2f instead of NaN", actual);
         return build_error_message(buf);
     }
     return NULL;

@@ -2,6 +2,7 @@
 #include "..\..\linal\linal.h"
 #include <stddef.h>
 #include <errno.h>
+#include <stdlib.h>
 
 Layer *build_network(size_t input_size, Layer_Info_t *layer_info, size_t active_layer_count) {
     Layer *initial_layer = initialize_layer(input_size, NONE, NO_INCOMING_WEIGHTS);
@@ -24,18 +25,18 @@ Layer *build_network(size_t input_size, Layer_Info_t *layer_info, size_t active_
 }
 
 //Needs optimizing: should pass through a single double * and not do any heap allocation
-Vector *feed_forward(const Layer * const network, Vector *input_vec) {
+double *feed_forward(const Layer * const network, double * const input_vec) {
     Layer * start = network->next;
     if (start == NULL) {
         errno = EINVAL;
         return NULL;
     }
-    Vector *current_state = apply_transformation(start, input_vec);
-    apply_activation_destructive(start->func, current_state);
+    double *current_state = apply_transformation(start, input_vec);
+    apply_activation(start->func, current_state, start->size);
     for (Layer *ptr = start; ptr != NULL; ptr = ptr->next) {
-        Vector *transformed_vec = apply_transformation(ptr, current_state);
-        apply_activation_destructive(ptr->func, transformed_vec);
-        destroy_vector(current_state);
+        double *transformed_vec = apply_transformation(ptr, current_state);
+        apply_activation(ptr->func, transformed_vec, ptr->size);
+        free(current_state);
         current_state = transformed_vec;
     }
     return current_state;
@@ -43,9 +44,5 @@ Vector *feed_forward(const Layer * const network, Vector *input_vec) {
 
 
 void destroy_network(Layer *first) {
-    Layer *nxt = first;
-    for (Layer *ptr = first; ptr != NULL; ptr = nxt) {
-        nxt = ptr->next;
-        destroy_layer(ptr);
-    }
+	for (Layer *ptr = first; ptr != NULL; ptr = destroy_layer(first));
 }

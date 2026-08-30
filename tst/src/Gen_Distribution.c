@@ -1,13 +1,14 @@
-#include "..\..\src\stat\gaussian.h"
-#include <stdio.h>
 #include <errno.h>
+#include <stdio.h>
 #include <string.h>
+
+#include "../../src/stat/gaussian.h"
 
 void write_double(FILE * const fp, const double value) {
     char buf[16];
     sprintf(buf, "%.4f\n", value);
     size_t len = strlen(buf);
-    fwrite(buf, sizeof(char), strlen(buf), fp);
+    fwrite(buf, sizeof(char), len, fp);
 }
 
 void write_uniform(const size_t count) {

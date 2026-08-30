@@ -4,21 +4,17 @@
 #include <stddef.h>
 #include <stdlib.h>
 
-Layer *initialize_layer(size_t size, Activation act_func, size_t fan_in) {
-    Layer *output = malloc(sizeof(Layer));
+Layer *initialize_layer(const size_t size, const Activation act_func, const size_t fan_in) {
+    Layer * const output = malloc(sizeof(Layer));
     if (output == NULL) {
         return NULL;
     }
     
-    Vector biases;
-    
-
     Matrix incoming_matrix;
+    double *biases;
     if (fan_in != NO_INCOMING_WEIGHTS) {
-
-        biases.dimensions = size;
-        biases.values = malloc(sizeof(double) * biases.dimensions);
-        if (biases.values == NULL) {
+        double *biases = malloc(sizeof(double) * size);
+        if (biases == NULL) {
             free(output);
             return NULL;
         }
@@ -27,13 +23,12 @@ Layer *initialize_layer(size_t size, Activation act_func, size_t fan_in) {
         incoming_matrix.width = fan_in;
         incoming_matrix.values = malloc(sizeof(double) * incoming_matrix.width * incoming_matrix.height);
         if (incoming_matrix.values == NULL) {
-            free(biases.values);
+            free(biases);
             free(output);
             return NULL;
         }
     } else {
-        biases.values = NULL;
-        biases.dimensions = NO_INCOMING_WEIGHTS;
+        biases = NULL;
         incoming_matrix.values = NULL;
         incoming_matrix.height = NO_INCOMING_WEIGHTS;
         incoming_matrix.width = NO_INCOMING_WEIGHTS;
@@ -45,43 +40,35 @@ Layer *initialize_layer(size_t size, Activation act_func, size_t fan_in) {
     output->incoming_weights = incoming_matrix;
     output->biases = biases;
     output->func = act_func;
+    return output;
 }
 
 //Future optimization: assume that the input vector is the size of the biggest layer in the network, and leave irrelevant rows untouched to avoid allocating and freeing repeatedly.
-Vector *apply_transformation(Layer *layer, Vector *input_vec) {
-    Vector *output_vec = initialize_vec(layer->size);
+double *apply_transformation(const Layer * const layer, const double * restrict const input_vec) {
+    double *output_vec = malloc(sizeof(double) * layer->size);
     if (output_vec == NULL) {
         return NULL;
     }
     transform(&layer->incoming_weights, input_vec, output_vec);
     
-    add(output_vec, &layer->biases);
+    add(output_vec, layer->biases, layer->size);
     return output_vec;
 }
 
-Vector *apply_softmax_nondestructive(Vector *transformed_vec) {
-    Vector *output_vec = initialize_vec(transformed_vec->dimensions);
-    if (output_vec == NULL) {
-        return NULL;
-    }
-    softmax(transformed_vec->values, transformed_vec->dimensions, output_vec->values);
-    return output_vec;
-}
-
-void apply_activation_destructive(Activation func, Vector *transformed_vec) {
+void apply_activation(Activation func, double *transformed_vec, const size_t vector_size) {
     switch (func) {
         case SIGMOID:
-            for (int i = 0; i < transformed_vec->dimensions; i++) {
-                transformed_vec->values[i] = sigmoid(transformed_vec->values[i]);
+            for (int i = 0; i < vector_size; i++) {
+                transformed_vec[i] = sigmoid(transformed_vec[i]);
             }
         break;
         case RELU:
-            for (int i = 0; i < transformed_vec->dimensions; i++) {
-                transformed_vec->values[i] = relu(transformed_vec->values[i]);
+            for (int i = 0; i < vector_size; i++) {
+                transformed_vec[i] = relu(transformed_vec[i]);
             }
         break;
         case SOFTMAX:
-            softmax_destructive(transformed_vec->values, transformed_vec->dimensions);
+            softmax_destructive(transformed_vec, vector_size);
             break;
         case NONE:
             errno = EINVAL;
@@ -92,7 +79,7 @@ void apply_activation_destructive(Activation func, Vector *transformed_vec) {
 Layer * destroy_layer(Layer * layer) {
     Layer *output = layer->next;
     free(layer->incoming_weights.values);
-    free(layer->biases.values);
+    free(layer->biases);
     free(layer);
     return output;
 }

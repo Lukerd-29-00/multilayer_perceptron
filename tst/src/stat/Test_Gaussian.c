@@ -15,6 +15,7 @@ char *test_uniform(void) {
     double r = uniform();
     ASSERT_DOUBLE_GE(0, r, "uniform");
     ASSERT_DOUBLE_LE(1, r, "uniform");
+    return NULL;
 }
 
 char *test_gaussian(void) {

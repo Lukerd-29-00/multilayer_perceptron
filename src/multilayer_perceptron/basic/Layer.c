@@ -13,7 +13,7 @@ Layer *initialize_layer(const size_t size, const Activation act_func, const size
     Matrix incoming_matrix;
     double *biases;
     if (fan_in != NO_INCOMING_WEIGHTS) {
-        double *biases = malloc(sizeof(double) * size);
+        biases = malloc(sizeof(double) * size);
         if (biases == NULL) {
             free(output);
             return NULL;

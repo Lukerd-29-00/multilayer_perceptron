@@ -76,10 +76,13 @@ void apply_activation(Activation func, double *transformed_vec, const size_t vec
     }
 }
 
-Layer * destroy_layer(Layer * layer) {
-    Layer *output = layer->next;
-    free(layer->incoming_weights.values);
-    free(layer->biases);
+void destroy_layer(Layer * layer) {
+    if (layer->incoming_weights.values != NULL) {
+        free(layer->incoming_weights.values);
+    }
+    if (layer->biases != NULL) {
+        free(layer->biases);
+    }
+    
     free(layer);
-    return output;
 }

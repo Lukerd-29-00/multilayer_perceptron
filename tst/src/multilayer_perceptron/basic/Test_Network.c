@@ -36,7 +36,7 @@ char *test_build_network(void) {
     Layer *hidden = start->next;
     ASSERT_NOT_NULL(hidden, "build network");
     ASSERT_POINTER_EQUALS(start, hidden->prev, "build network");
-    ASSERT_INT_EQUALS(2, hidden->size, "build network");
+    ASSERT_INT_EQUALS(3, hidden->size, "build network");
     ASSERT_INT_EQUALS(3, hidden->incoming_weights.height, "build network");
     ASSERT_INT_EQUALS(1, hidden->incoming_weights.width, "build network");
     ASSERT_NOT_NULL(hidden->incoming_weights.values, "build network");
@@ -106,8 +106,8 @@ char *test_feed_forward(void) {
 
     char *error_message = NULL;
 
-    ASSERT_DOUBLE(2.681003867781731e-14, output_vec[0], 0.01, "feed forward");
-    ASSERT_DOUBLE(0.9999999999999731, output_vec[1], 0.01, "feed forward");
+    ASSERT_DOUBLE(0.9982958785423037, output_vec[0], 0.01, "feed forward");
+    ASSERT_DOUBLE(0.0017041214576962926, output_vec[1], 0.01, "feed forward");
 
     destroy_network(start);
     free(output_vec);

@@ -26,14 +26,14 @@ Layer *build_network(size_t input_size, Layer_Info_t *layer_info, size_t active_
 
 //Needs optimizing: should pass through a single double * and not do any heap allocation
 double *feed_forward(const Layer * const network, double * const input_vec) {
-    Layer * start = network->next;
-    if (start == NULL) {
+    if (network->next == NULL) {
         errno = EINVAL;
         return NULL;
     }
-    double *current_state = apply_transformation(start, input_vec);
-    apply_activation(start->func, current_state, start->size);
-    for (Layer *ptr = start; ptr != NULL; ptr = ptr->next) {
+    double *current_state = malloc(sizeof(double) * network->size);
+    for (int i = 0; i < network->size; i++) 
+        current_state[i] = input_vec[i];
+    for (Layer *ptr = network->next; ptr != NULL; ptr = ptr->next) {
         double *transformed_vec = apply_transformation(ptr, current_state);
         apply_activation(ptr->func, transformed_vec, ptr->size);
         free(current_state);
@@ -44,5 +44,9 @@ double *feed_forward(const Layer * const network, double * const input_vec) {
 
 
 void destroy_network(Layer *first) {
-	for (Layer *ptr = first; ptr != NULL; ptr = destroy_layer(first));
+    Layer *nxt;
+	for (Layer *ptr = first; ptr != NULL; ptr = nxt) {
+        nxt = ptr->next;
+        destroy_layer(ptr);
+    }
 }

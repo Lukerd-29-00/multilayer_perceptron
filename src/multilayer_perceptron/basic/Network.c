@@ -5,7 +5,7 @@
 #include <stdlib.h>
 
 Layer *build_network(size_t input_size, Layer_Info_t *layer_info, size_t active_layer_count) {
-    Layer *initial_layer = initialize_layer(input_size, NONE, NO_INCOMING_WEIGHTS);
+    Layer *initial_layer = initialize_first_layer(input_size);
     if (initial_layer == NULL) {
         return NULL;
     }
@@ -24,22 +24,21 @@ Layer *build_network(size_t input_size, Layer_Info_t *layer_info, size_t active_
     return initial_layer;
 }
 
-//Needs optimizing: should pass through a single double * and not do any heap allocation
-double *feed_forward(const Layer * const network, double * const input_vec) {
-    if (network->next == NULL) {
-        errno = EINVAL;
-        return NULL;
+double *feed_forward(const Layer * const network, double * const input_vec, double * restrict state_vec_1, double * restrict state_vec_2) {
+    
+    for (int i = 0; i < network->size; i++) {
+        state_vec_1[i] = input_vec[i];
     }
-    double *current_state = malloc(sizeof(double) * network->size);
-    for (int i = 0; i < network->size; i++) 
-        current_state[i] = input_vec[i];
+    
     for (Layer *ptr = network->next; ptr != NULL; ptr = ptr->next) {
-        double *transformed_vec = apply_transformation(ptr, current_state);
-        apply_activation(ptr->func, transformed_vec, ptr->size);
-        free(current_state);
-        current_state = transformed_vec;
+        apply_transformation(ptr, state_vec_1, state_vec_2);
+        apply_activation(ptr->func, state_vec_2, ptr->size);
+        
+        double *tmp = state_vec_1;
+        state_vec_1 = state_vec_2;
+        state_vec_2 = tmp;
     }
-    return current_state;
+    return state_vec_1;
 }
 
 

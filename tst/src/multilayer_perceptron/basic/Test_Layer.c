@@ -16,8 +16,28 @@ char *test_initialize_layer(void) {
     ASSERT_INT_EQUALS(3, layer->size, "initialize layer");
     ASSERT_INT_EQUALS(3, layer->incoming_weights.height, "initialize layer");
     ASSERT_INT_EQUALS(2, layer->incoming_weights.width, "intialize layer");
+    ASSERT_NOT_NULL(layer->incoming_weights.values, "initialize layer");
     ASSERT_NOT_NULL(layer->biases, "initialize layer");
     ASSERT_ACTIVATION_EQUALS(SIGMOID, layer->func, "initialize layer");
+
+    destroy_layer(layer);
+    return NULL;
+}
+
+char *test_initialize_first_layer(void) {
+    Layer *layer = initialize_first_layer(3);
+    if (layer == NULL) {
+        return NULL;
+    }
+    char *error_message = NULL;
+    ASSERT_NULL(layer->prev, "initialize first layer");
+    ASSERT_NULL(layer->next, "initialize first layer");
+    ASSERT_INT_EQUALS(3, layer->size, "initialize first layer");
+    ASSERT_INT_EQUALS(NO_INCOMING_WEIGHTS, layer->incoming_weights.height, "initalize first layer");
+    ASSERT_INT_EQUALS(NO_INCOMING_WEIGHTS, layer->incoming_weights.width, "initialize first layer");
+    ASSERT_NULL(layer->incoming_weights.values, "initalize first layer");
+    ASSERT_NULL(layer->biases, "intialize first layer");
+    ASSERT_ACTIVATION_EQUALS(NONE, layer->func, "initialize first layer");
 
     destroy_layer(layer);
     return NULL;
@@ -39,12 +59,12 @@ char *test_apply_transformation(void) {
     for (int i = 0; i < 2; i++) {
         input_vec[i] = i + 1;
     }
-    double *output_vec = apply_transformation(layer, input_vec);
+    double output_vec[2];
+    apply_transformation(layer, input_vec, output_vec);
     ASSERT_DOUBLE(6, output_vec[0], 0.01, "apply transformation");
     ASSERT_DOUBLE(7, output_vec[1], 0.01, "apply transformation");
 
     destroy_layer(layer);
-    free(output_vec);
     return NULL;
 }
 

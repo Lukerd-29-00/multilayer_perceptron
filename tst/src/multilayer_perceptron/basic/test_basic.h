@@ -1,4 +1,5 @@
 char *test_initialize_layer(void);
+char *test_initialize_first_layer(void);
 char *test_apply_transformation(void);
 char *test_apply_softmax_nondestructive(void);
 char *test_apply_activation_sigmoid(void);

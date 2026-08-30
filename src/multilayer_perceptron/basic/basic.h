@@ -24,10 +24,11 @@ typedef struct lay_inf {
 
 #endif
 
+Layer *initialize_first_layer(const size_t size);
 Layer *initialize_layer(const size_t size, const Activation act_func, const size_t fan_in);
-double *apply_transformation(const Layer * const layer, const double * restrict const input_vec);
+void apply_transformation(const Layer * const layer, const double * restrict const input_vec, double * const restrict output_vec);
 void apply_activation(Activation func, double *transformed_vec, const size_t vector_size);
 void destroy_layer(Layer * layer);
 Layer *build_network(size_t input_size, Layer_Info_t *layer_info, size_t layer_count);
-double *feed_forward(const Layer * const network, double * const input_vec);
+double *feed_forward(const Layer * const network, double * const input_vec, double * restrict state_vec_1, double * restrict state_vec_2);
 void destroy_network(Layer *first);

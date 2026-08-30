@@ -5,6 +5,7 @@
 void basic_perceptron_suite(int *failures) {
     char *error_message = NULL;
     RUN_TEST(test_initialize_layer);
+    RUN_TEST(test_initialize_first_layer)
     RUN_TEST(test_apply_transformation);
     RUN_TEST(test_apply_activation_sigmoid);
     RUN_TEST(test_apply_activation_relu);

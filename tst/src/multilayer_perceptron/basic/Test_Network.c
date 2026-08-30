@@ -102,7 +102,10 @@ char *test_feed_forward(void) {
     last->biases[0] = -2.5;
     last->biases[1] = 3;
 
-    double *output_vec = feed_forward(start, input_vec);
+    double state_vec_1[3];
+    double state_vec_2[3];
+
+    double *output_vec = feed_forward(start, input_vec, state_vec_1, state_vec_2);
 
     char *error_message = NULL;
 
@@ -110,7 +113,6 @@ char *test_feed_forward(void) {
     ASSERT_DOUBLE(0.0017041214576962926, output_vec[1], 0.01, "feed forward");
 
     destroy_network(start);
-    free(output_vec);
 
     return NULL;
 }

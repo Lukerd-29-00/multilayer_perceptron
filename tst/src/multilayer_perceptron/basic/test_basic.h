@@ -1,0 +1,9 @@
+char *test_initialize_layer(void);
+char *test_apply_transformation(void);
+char *test_apply_softmax_nondestructive(void);
+char *test_apply_activation_destructive_sigmoid(void);
+char *test_apply_activation_destructive_relu(void);
+char *test_apply_activation_destructive_softmax(void);
+void basic_perceptron_suite(int *failures);
+char *test_build_network(void);
+char *test_feed_forward(void);

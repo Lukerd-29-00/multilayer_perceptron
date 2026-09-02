@@ -11,6 +11,8 @@ tst/src/activation/activation_test.h: src/activation/activation.h
 
 src\multilayer_perceptron\basic\basic.h: src/linal/linal.h
 
+src\multilayer_perceptron\training\training.h: src\multilayer_perceptron\basic\basic.h
+
 $(OBJECTS_FOLDER)/Matrix.o: src/linal/Matrix.c src/linal/linal.h
 	gcc $< -o $@  $(OBJECT_COMPILER_ARGS)
 
@@ -100,6 +102,9 @@ build/test/gen_dist.exe: $(OBJECTS) $(OBJECTS_FOLDER)/Gen_Distribution.o
 
 test: build/test/test.exe
 	$<
+
+test-debug: build/test/test.exe
+	gdb $<
 
 gen_dist: build/test/gen_dist.exe
 	$<

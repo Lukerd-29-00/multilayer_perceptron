@@ -16,11 +16,6 @@ int main(void) {
     }
     const int total = 32;
     int failures = 0;
-    load_resources_dir();
-    if (errno) {
-        perror("Error loading resources!");
-        return errno;
-    }
     test_linal(&failures);
     if (errno) {
         perror("Panic on linear algebra!");

@@ -1,9 +1,7 @@
 COMPILER_ARGS = -g -mconsole
 OBJECT_COMPILER_ARGS = -c $(COMPILER_ARGS)
 OBJECTS_FOLDER = build/target/objects
-TEST_RESOURCES = tst/resources
-TEST_RESOURCES_OUTPUT = build/test/resources
-OBJECTS = $(OBJECTS_FOLDER)/Matrix.o $(OBJECTS_FOLDER)/Vector.o $(OBJECTS_FOLDER)/Assert.o $(OBJECTS_FOLDER)/Resources.o $(OBJECTS_FOLDER)/Test_Mat.o $(OBJECTS_FOLDER)/Test_Vector.o $(OBJECTS_FOLDER)/Relu.o $(OBJECTS_FOLDER)/Sigmoid.o $(OBJECTS_FOLDER)/Softmax.o $(OBJECTS_FOLDER)/Test_Relu.o $(OBJECTS_FOLDER)/Test_Sigmoid.o $(OBJECTS_FOLDER)/Test_Softmax.o $(OBJECTS_FOLDER)/Activation_Suite.o $(OBJECTS_FOLDER)/Linal_Suite.o $(OBJECTS_FOLDER)/Gaussian.o $(OBJECTS_FOLDER)/Test_Gaussian.o $(OBJECTS_FOLDER)/Gaussian_Suite.o $(OBJECTS_FOLDER)/Basic_Suite.o $(OBJECTS_FOLDER)/Test_Layer.o $(OBJECTS_FOLDER)/Layer.o $(OBJECTS_FOLDER)/Network.o $(OBJECTS_FOLDER)/Test_Network.o $(OBJECTS_FOLDER)/Initialization.o $(OBJECTS_FOLDER)/Test_Initialization.o $(OBJECTS_FOLDER)/Training_Suite.o
+OBJECTS = $(OBJECTS_FOLDER)/Matrix.o $(OBJECTS_FOLDER)/Vector.o $(OBJECTS_FOLDER)/Assert.o $(OBJECTS_FOLDER)/Test_Mat.o $(OBJECTS_FOLDER)/Test_Vector.o $(OBJECTS_FOLDER)/Relu.o $(OBJECTS_FOLDER)/Sigmoid.o $(OBJECTS_FOLDER)/Softmax.o $(OBJECTS_FOLDER)/Test_Relu.o $(OBJECTS_FOLDER)/Test_Sigmoid.o $(OBJECTS_FOLDER)/Test_Softmax.o $(OBJECTS_FOLDER)/Activation_Suite.o $(OBJECTS_FOLDER)/Linal_Suite.o $(OBJECTS_FOLDER)/Gaussian.o $(OBJECTS_FOLDER)/Test_Gaussian.o $(OBJECTS_FOLDER)/Gaussian_Suite.o $(OBJECTS_FOLDER)/Basic_Suite.o $(OBJECTS_FOLDER)/Test_Layer.o $(OBJECTS_FOLDER)/Layer.o $(OBJECTS_FOLDER)/Network.o $(OBJECTS_FOLDER)/Test_Network.o $(OBJECTS_FOLDER)/Initialization.o $(OBJECTS_FOLDER)/Test_Initialization.o $(OBJECTS_FOLDER)/Training_Suite.o
 
 tst/src/Testing.h tst/src/linal/linal_test.h: src/linal/linal.h
 
@@ -13,7 +11,12 @@ src\multilayer_perceptron\basic\basic.h: src/linal/linal.h
 
 src\multilayer_perceptron\training\training.h: src\multilayer_perceptron\basic\basic.h
 
-$(OBJECTS_FOLDER)/Matrix.o: src/linal/Matrix.c src/linal/linal.h
+build:
+	python3 make_build_folder.py
+
+$(OBJECTS): build
+
+$(OBJECTS_FOLDER)/Matrix.o: src/linal/Matrix.c src/linal/linal.h build
 	gcc $< -o $@  $(OBJECT_COMPILER_ARGS)
 
 $(OBJECTS_FOLDER)/Vector.o: src/linal/Vector.c src/linal/linal.h
@@ -41,9 +44,6 @@ $(OBJECTS_FOLDER)/Initialization.o: src\multilayer_perceptron\training\Initializ
 	gcc $< -o $@ $(OBJECT_COMPILER_ARGS)
 
 $(OBJECTS_FOLDER)/Assert.o: tst/src/Assert.c tst/src/Testing.h src/linal/linal.h
-	gcc $< -o $@ $(OBJECT_COMPILER_ARGS)
-
-$(OBJECTS_FOLDER)/Resources.o: tst/src/Resources.c tst/src/Testing.h
 	gcc $< -o $@ $(OBJECT_COMPILER_ARGS)
 
 $(OBJECTS_FOLDER)/Runner.o: tst/src/Runner.c tst/src/Testing.h tst/src/linal/linal_test.h tst/src/activation/activation_test.h

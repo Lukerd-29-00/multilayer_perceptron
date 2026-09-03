@@ -1,4 +1,4 @@
-#include "..\..\linal\linal.h"
+#include "../../linal/linal.h"
 #include <stddef.h>
 #include <stdbool.h>
 

@@ -1,6 +1,6 @@
 #include "test_training.h"
 #include "../../Testing.h"
-#include "../../../../src\multilayer_perceptron\training\training.h"
+#include "../../../../src\multilayer_perceptron/training/training.h"
 #include "../../../../src/multilayer_perceptron/basic/basic.h"
 #include <math.h>
 #include <stddef.h>

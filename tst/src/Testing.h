@@ -1,5 +1,5 @@
 #include "../../src/linal/linal.h"
-#include "..\..\src/multilayer_perceptron/basic/basic.h"
+#include "../../src/multilayer_perceptron/basic/basic.h"
 #include <stdio.h>
 #define MAX_LEN 10240
 

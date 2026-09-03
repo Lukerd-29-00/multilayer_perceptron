@@ -1,6 +1,6 @@
-#include "..\..\Testing.h"
-#include "..\..\..\..\src\multilayer_perceptron\basic\basic.h"
-#include "..\..\..\..\src\linal\linal.h"
+#include "../../Testing.h"
+#include "../../../../src/multilayer_perceptron/basic/basic.h"
+#include "../../../../src/linal/linal.h"
 #include <stddef.h>
 #include <stdlib.h>
 

@@ -1,6 +1,6 @@
 #include "basic.h"
-#include "..\..\linal\linal.h"
-#include "..\..\activation\activation.h"
+#include "../../linal/linal.h"
+#include "../../activation/activation.h"
 #include <stddef.h>
 #include <stdlib.h>
 

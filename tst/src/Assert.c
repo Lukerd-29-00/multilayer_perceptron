@@ -5,7 +5,7 @@
 #include <math.h>
 #include "Testing.h"
 #include "../../src/linal/linal.h"
-#include "..\..\src\multilayer_perceptron\basic\basic.h"
+#include "../../src/multilayer_perceptron/basic/basic.h"
 
 char *enrich_error_message(char * restrict const error_message, const char * restrict const method_name) {
     char buf[MAX_LEN];

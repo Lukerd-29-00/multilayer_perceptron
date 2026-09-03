@@ -1,5 +1,5 @@
 #include "basic.h"
-#include "..\..\linal\linal.h"
+#include "../../linal/linal.h"
 #include <stddef.h>
 #include <errno.h>
 #include <stdlib.h>

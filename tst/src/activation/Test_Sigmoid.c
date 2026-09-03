@@ -1,5 +1,5 @@
 #include "../Testing.h"
-#include "..\..\..\src\activation\activation.h"
+#include "../../../src/activation/activation.h"
 #include <stdlib.h>
 #include <stdio.h>
 

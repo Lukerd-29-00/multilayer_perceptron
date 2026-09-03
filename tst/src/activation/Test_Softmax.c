@@ -1,5 +1,5 @@
 #include "../Testing.h"
-#include "..\..\..\src\activation\activation.h"
+#include "../../../src/activation/activation.h"
 
 #define ERROR_MARGIN 0.01
 

@@ -108,6 +108,3 @@ test-debug: build/test/test.exe
 
 gen_dist: build/test/gen_dist.exe
 	$<
-
-clean:
-	python3 clean.py ./build .o .exe

@@ -61,3 +61,8 @@ Matrix *initialize_matrix(const int height, const int width);
  * @param mat The matrix to destroy
 */
 void destroy_matrix(Matrix * const mat);
+
+void add_matrices(const Matrix * const restrict a, const Matrix * const restrict b);
+void scale_rows_destructive(Matrix * const target, const double * const scales);
+void scale_rows(const Matrix * const restrict target, const double * const restrict scales, Matrix * const restrict output);
+void transpose(const Matrix * const restrict input, Matrix * const restrict output);

@@ -2,6 +2,7 @@
 #include "../../linal/linal.h"
 #include <errno.h>
 #include <stdlib.h>
+#include <assert.h>
 
 thread_local Scratchpad_t scratchpad;
 
@@ -72,6 +73,35 @@ void calculate_for_layer(const Layer * const layer, const Layer_Calcs_t * const 
     scale_rows_destructive(scratchpad->weight_transform, scratchpad->activation_derivative);
     transform(scratchpad->weight_transform, previous_derivs, output->bias_derivs);
     scale_rows(&layer->incoming_weights, output->bias_derivs, output->weight_derivs);
+}
+
+void calculate_dc_dinput_hidden(const Layer * const hidden_layer, const double * const restrict input_values, const double * const restrict derivs, const Activation activation, double * const restrict output) {
+    Layer current_layer = *hidden_layer;
+    derivative_of(activation, input_values, scratchpad->activation_derivative);
+    transpose(&current_layer.incoming_weights, scratchpad->weight_transform);
+    scale_rows_destructive(scratchpad->weight_transform, scratchpad->activation_derivative);
+    transform(scratchpad->weight_transform, derivs, output);
+}
+
+void calculate_weight_dervis(const Layer * const layer, const double * const restrict previous_outputs, double *derivs, Matrix *weight_outputs) {
+
+
+}
+
+void derivative_of(const Activation activation, const double * const restrict input_values, const size_t value_count, double * const restrict output_values) {
+    assert(activation != NONE);
+    
+    switch (activation) {
+        case SIGMOID:
+            calculate_sigmoid_primes(input_values, output, value_count);
+            break;
+        case RELU:
+            calculate_relu_primes(input_values, output, value_count);
+            break;
+        case SOFTMAX:
+            calculate_softmax_prime(input_values, output, value_count);
+            break;
+    }
 }
 
 void calculate_sigmoid_primes(double *input_values, double *derivs, size_t count) {

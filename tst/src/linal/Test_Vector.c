@@ -165,3 +165,35 @@ char *test_transform_2x3(void) {
     }
     return test_result;
 }
+
+char *test_outer_product(void) {
+    char *error_message = NULL;
+
+    double vector_a[4] = {2., 3.4, 5., -3.};
+    double vector_b[3] = {2., 3.33, 8.};
+
+    Matrix *output_matrix = initialize_matrix(4, 3);
+    if (output_matrix == NULL) {
+        return NULL;
+    }
+
+    outer_product(vector_a, 4, vector_b, 3, output_matrix);
+
+    ASSERT_DOUBLE(4, output_matrix->values[0], 0.01, "test outer product");
+    ASSERT_DOUBLE(6.66, output_matrix->values[1], 0.01, "test outer product");
+    ASSERT_DOUBLE(16, output_matrix->values[2], 0.01, "test outer product");
+
+    ASSERT_DOUBLE(6.8, output_matrix->values[3], 0.01, "test outer product");
+    ASSERT_DOUBLE(11.322, output_matrix->values[4], 0.01, "test outer product");
+    ASSERT_DOUBLE(27.2, output_matrix->values[5], 0.01, "test outer product");
+
+    ASSERT_DOUBLE(10, output_matrix->values[6], 0.01, "test outer product");
+    ASSERT_DOUBLE(16.65, output_matrix->values[7], 0.01, "test outer product");
+    ASSERT_DOUBLE(40, output_matrix->values[8], 0.01, "test outer product");
+
+    ASSERT_DOUBLE(-6, output_matrix->values[9], 0.01, "test outer product");
+    ASSERT_DOUBLE(-9.99, output_matrix->values[10], 0.01, "test outer product");
+    ASSERT_DOUBLE(-24, output_matrix->values[11], 0.01, "test outer product");
+
+    return NULL;
+}

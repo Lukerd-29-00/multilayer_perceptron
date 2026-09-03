@@ -43,49 +43,46 @@ void teardown_backprop() {
 
 
 
-void calculate_backprop_for_run(const Layer * const network, const Layer_Calcs_t * const calcs, const double *correct_answer, Backprop_Output_t *output) {
-    Layer *last;
-    size_t i = 0;
-    for (last = network; last->next != NULL; last = last->next) {
-        i++;
-    }
-    for (int i = 0; i < last->size; i++) {
-        throwaway[i] = 2 * (calcs[i].output_values - correct_answer[i]);
-    }
-    
+void calculate_backprop_for_run(const Network * const network, const Layer_Calcs_t * const calcs, const double *correct_answer, Backprop_Output_t *output) {
+    size_t last_layer_idx = network->layers_count - 1;
+    Layer last = network->layers_array[last_layer_idx];
+    double *output_values = calcs[last_layer_idx].output_values;
+    double *last_bias_derivs = output[last_layer_idx];
+    double *last_inputs = calcs[last_layer_idx].input_values;
+    derivative_of(SOFTMAX, last_inputs,  last.size, last_bias_derivs);
 
-}
-
-void calculate_for_layer(const Layer * const layer, const Layer_Calcs_t * const calcs, size_t fan_out, double *previous_derivs) {
-    switch (layer->func) {
-        case SIGMOID:
-            calculate_sigmoid_primes(calcs->input_values, scratchpad->activation_derivative);
-            break;
-        case RELU:
-            calculate_relu_primes(calcs->input_values, scratchpad->activation_derivative);
-            break;
-        case SOFTMAX:
-        case NONE:
-            errno = EINVAL;
-            return;
+    for (int i = 0; i < last.size; i++) {
+        double original_deriv = last_bias_derivs[i];
+        last_bias_derivs[i] = 0;
+        for (int j = 0; j < last.size; j++) {
+            // d/dz_j SOFTMAX(original_input_value[i]) = - d/dz_j SOFTMAX(original_input_value[i])
+            last_bias_derivs[i] += (j==i ? original_deriv : -original_deriv) * 2 * (output_values[j] - correct_answer[j])
+        }
     }
-    transpose(&layer->incoming_weights, scratchpad->weight_transform);
-    scale_rows_destructive(scratchpad->weight_transform, scratchpad->activation_derivative);
-    transform(scratchpad->weight_transform, previous_derivs, output->bias_derivs);
-    scale_rows(&layer->incoming_weights, output->bias_derivs, output->weight_derivs);
+
+    int i = last_layer_idx;
+    do {
+
+    } while (i > 0) //Skipping the first layer is intentional
 }
 
 void calculate_dc_dinput_hidden(const Layer * const hidden_layer, const double * const restrict input_values, const double * const restrict derivs, const Activation activation, double * const restrict output) {
     Layer current_layer = *hidden_layer;
-    derivative_of(activation, input_values, scratchpad->activation_derivative);
+    derivative_of(activation, input_values, current_layer.fan_in, scratchpad->activation_derivative);
+    size_t height = scratchpad->weight_transform->height;
+    size_t width = scratchpad->weight_transform->width;
+    //This is required to be able to index this matrix properly, not just a hack around asserts!
+    scratchpad->weight_transform->height = current_layer.incoming_weights.width;
+    scratchpad->weight_transform->width = current_layer.incoming_weights.height;
     transpose(&current_layer.incoming_weights, scratchpad->weight_transform);
     scale_rows_destructive(scratchpad->weight_transform, scratchpad->activation_derivative);
     transform(scratchpad->weight_transform, derivs, output);
+    scratchpad->weight_transform->height = height;
+    scratchpad->weight_transform->width = width;
 }
 
-void calculate_weight_dervis(const Layer * const layer, const double * const restrict previous_outputs, double *derivs, Matrix *weight_outputs) {
-
-
+void calculate_weight_derivs(Layer *hidden_layer, const double * const restrict previous_outputs, double *derivs, Matrix *weight_outputs) {
+    outer_product(derivs, layer->size, previous_outputs, layer->fan_in, weight_outputs);
 }
 
 void derivative_of(const Activation activation, const double * const restrict input_values, const size_t value_count, double * const restrict output_values) {
@@ -121,7 +118,3 @@ void calculate_softmax_prime(double *input_values, double *derivs, size_t count)
         derivs[i] = softmax_prime(input_values, i, count);
     }
 }
-
-void update_network(Layer *network, Matrix **backprop_derivs, double **bias_derivs);
-
-

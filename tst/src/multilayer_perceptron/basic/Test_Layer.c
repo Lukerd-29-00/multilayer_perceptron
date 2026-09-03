@@ -1,59 +1,54 @@
-#include "..\..\Testing.h"
-#include "..\..\..\..\src\multilayer_perceptron\basic\basic.h"
-#include "..\..\..\..\src\linal\linal.h"
+#include "../../Testing.h"
+#include "../../../../src/multilayer_perceptron/basic/basic.h"
+#include "../../../../src/linal/linal.h"
 #include <stddef.h>
 #include <stdlib.h>
 
 
 char *test_initialize_layer(void) {
-    Layer *layer = initialize_layer(3, SIGMOID, 2);
-    if (layer == NULL) {
-        return NULL;
-    }
+    Layer layer = initialize_layer(3, SIGMOID, 2, 4);
+
     char *error_message = NULL;
-    ASSERT_NULL(layer->prev, "initialize layer");
-    ASSERT_NULL(layer->next, "initialize layer");
-    ASSERT_INT_EQUALS(3, layer->size, "initialize layer");
-    ASSERT_INT_EQUALS(3, layer->incoming_weights.height, "initialize layer");
-    ASSERT_INT_EQUALS(2, layer->incoming_weights.width, "intialize layer");
-    ASSERT_NOT_NULL(layer->incoming_weights.values, "initialize layer");
-    ASSERT_NOT_NULL(layer->biases, "initialize layer");
-    ASSERT_ACTIVATION_EQUALS(SIGMOID, layer->func, "initialize layer");
+    ASSERT_INT_EQUALS(3, layer.size, "initialize layer");
+    ASSERT_INT_EQUALS(3, layer.incoming_weights.height, "initialize layer");
+    ASSERT_INT_EQUALS(2, layer.incoming_weights.width, "intialize layer");
+    ASSERT_NOT_NULL(layer.incoming_weights.values, "initialize layer");
+    ASSERT_NOT_NULL(layer.biases, "initialize layer");
+    ASSERT_ACTIVATION_EQUALS(SIGMOID, layer.func, "initialize layer");
+    ASSERT_INT_EQUALS(2, layer.fan_in, "initialize layer");
+    ASSERT_INT_EQUALS(4, layer.fan_out, "initialize layer");
 
     destroy_layer(layer);
+
     return NULL;
 }
 
 char *test_initialize_first_layer(void) {
-    Layer *layer = initialize_first_layer(3);
-    if (layer == NULL) {
-        return NULL;
-    }
-    char *error_message = NULL;
-    ASSERT_NULL(layer->prev, "initialize first layer");
-    ASSERT_NULL(layer->next, "initialize first layer");
-    ASSERT_INT_EQUALS(3, layer->size, "initialize first layer");
-    ASSERT_INT_EQUALS(NO_INCOMING_WEIGHTS, layer->incoming_weights.height, "initalize first layer");
-    ASSERT_INT_EQUALS(NO_INCOMING_WEIGHTS, layer->incoming_weights.width, "initialize first layer");
-    ASSERT_NULL(layer->incoming_weights.values, "initalize first layer");
-    ASSERT_NULL(layer->biases, "intialize first layer");
-    ASSERT_ACTIVATION_EQUALS(NONE, layer->func, "initialize first layer");
+    Layer layer = initialize_first_layer(3, 2);
 
+    char *error_message = NULL;
+    ASSERT_INT_EQUALS(3, layer.size, "initialize first layer");
+    ASSERT_INT_EQUALS(NO_INCOMING_WEIGHTS, layer.incoming_weights.height, "initalize first layer");
+    ASSERT_INT_EQUALS(NO_INCOMING_WEIGHTS, layer.incoming_weights.width, "initialize first layer");
+    ASSERT_NULL(layer.incoming_weights.values, "initalize first layer");
+    ASSERT_NULL(layer.biases, "intialize first layer");
+    ASSERT_ACTIVATION_EQUALS(NONE, layer.func, "initialize first layer");
+    ASSERT_INT_EQUALS(NO_FAN, layer.fan_in, "initialize first layer");
+    ASSERT_INT_EQUALS(2, layer.fan_out, "intialize first layer");
+    
     destroy_layer(layer);
     return NULL;
 }
 
 char *test_apply_transformation(void) {
-    Layer *layer = initialize_layer(2, SIGMOID, 2);
-    if (layer == NULL) {
-        return NULL;
-    }
+    Layer layer = initialize_layer(2, SIGMOID, 2, 1);
+
     char *error_message = NULL;
     for (int i = 0; i < 2; i++) {
-        layer->biases[i] = i;
+        layer.biases[i] = i;
     }
     for (int i = 0; i < 4; i++) {
-        layer->incoming_weights.values[i] = 2;
+        layer.incoming_weights.values[i] = 2;
     }
     double input_vec[2];
     for (int i = 0; i < 2; i++) {

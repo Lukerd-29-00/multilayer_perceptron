@@ -1,6 +1,6 @@
-#include "..\Testing.h"
+#include "../Testing.h"
 #include "test_gaussian.h"
-#include "..\..\..\src\stat\gaussian.h"
+#include "../../../src/stat/gaussian.h"
 #include <math.h>
 
 char *test_normalize(void) {

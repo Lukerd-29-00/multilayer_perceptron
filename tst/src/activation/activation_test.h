@@ -1,4 +1,4 @@
-#include "..\..\..\src\activation\activation.h"
+#include "../../../src/activation/activation.h"
 
 char *test_softmax_prime();
 char *test_softmax();

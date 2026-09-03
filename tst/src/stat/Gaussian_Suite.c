@@ -1,5 +1,5 @@
 #include "test_gaussian.h"
-#include "..\Testing.h"
+#include "../Testing.h"
 #include <stdio.h>
 #include <stdlib.h>
 

@@ -1,40 +1,32 @@
 #include "basic.h"
-#include "..\..\linal\linal.h"
-#include "..\..\activation\activation.h"
+#include "../../linal/linal.h"
+#include "../../activation/activation.h"
 #include <stddef.h>
 #include <stdlib.h>
 
-Layer *initialize_first_layer(const size_t size) {
-    Layer * const output = malloc(sizeof(Layer));
-    if (output == NULL) {
-        return NULL;
-    }
-
+Layer initialize_first_layer(const size_t size, const size_t fan_out) {
     Matrix incoming_matrix;
     incoming_matrix.values = NULL;
     incoming_matrix.height = NO_INCOMING_WEIGHTS;
     incoming_matrix.width = NO_INCOMING_WEIGHTS;
 
-    output->next = NULL;
-    output->prev = NULL;
-    output->size = size;
-    output->incoming_weights = incoming_matrix;
-    output->biases = NULL;
-    output->func = NONE;
+    Layer output;
+    output.size = size;
+    output.incoming_weights = incoming_matrix;
+    output.biases = NULL;
+    output.func = NONE;
+    output.fan_in = NO_FAN;
+    output.fan_out = fan_out;
+
     return output;
 }
 
-Layer *initialize_layer(const size_t size, const Activation act_func, const size_t fan_in) {
-    Layer * const output = malloc(sizeof(Layer));
-    if (output == NULL) {
-        return NULL;
-    }
-    
-    
+Layer initialize_layer(const size_t size, const Activation act_func, const size_t fan_in, const size_t fan_out) {
+    Layer output;
     double *biases = malloc(sizeof(double) * size);
     if (biases == NULL) {
-        free(output);
-        return NULL;
+        output.biases = NULL;
+        return output;
     }
 
     Matrix incoming_matrix;
@@ -43,24 +35,25 @@ Layer *initialize_layer(const size_t size, const Activation act_func, const size
     incoming_matrix.values = malloc(sizeof(double) * incoming_matrix.width * incoming_matrix.height);
     if (incoming_matrix.values == NULL) {
         free(biases);
-        free(output);
-        return NULL;
+        output.biases = NULL;
+        return output;
     }
-    
 
-    output->next = NULL;
-    output->prev = NULL;
-    output->size = size;
-    output->incoming_weights = incoming_matrix;
-    output->biases = biases;
-    output->func = act_func;
+    
+    output.size = size;
+    output.incoming_weights = incoming_matrix;
+    output.biases = biases;
+    output.func = act_func;
+    output.fan_in = fan_in;
+    output.fan_out = fan_out;
+
     return output;
 }
 
-void apply_transformation(const Layer * const layer, const double * restrict const input_vec, double * const restrict output_vec) {
-    transform(&layer->incoming_weights, input_vec, output_vec);
+void apply_transformation(const Layer layer, const double * restrict const input_vec, double * const restrict output_vec) {
+    transform(&layer.incoming_weights, input_vec, output_vec);
     
-    add(output_vec, layer->biases, layer->size);
+    add(output_vec, layer.biases, layer.size);
 }
 
 void apply_activation(Activation func, double *transformed_vec, const size_t vector_size) {
@@ -84,13 +77,11 @@ void apply_activation(Activation func, double *transformed_vec, const size_t vec
     }
 }
 
-void destroy_layer(Layer * layer) {
-    if (layer->incoming_weights.values != NULL) {
-        free(layer->incoming_weights.values);
+void destroy_layer(Layer layer) {
+    if (layer.incoming_weights.values != NULL) {
+        free(layer.incoming_weights.values); 
     }
-    if (layer->biases != NULL) {
-        free(layer->biases);
+    if (layer.biases != NULL) {
+        free(layer.biases);
     }
-    
-    free(layer);
 }

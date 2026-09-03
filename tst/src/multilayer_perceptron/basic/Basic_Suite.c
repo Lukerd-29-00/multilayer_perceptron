@@ -1,5 +1,5 @@
 #include "test_basic.h"
-#include "..\..\Testing.h"
+#include "../../Testing.h"
 #include <stdlib.h>
 
 void basic_perceptron_suite(int *failures) {

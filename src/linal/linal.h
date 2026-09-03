@@ -62,7 +62,17 @@ Matrix *initialize_matrix(const int height, const int width);
 */
 void destroy_matrix(Matrix * const mat);
 
-void add_matrices(const Matrix * const restrict a, const Matrix * const restrict b);
+/** 
+ * @brief add the elements of two matrices
+ * 
+ * Sets the values in a to that item plus the corresponding item in b.
+ * Requires both to be the same size.
+ *
+ * @param a The first input. Values will be overwritten.
+ * @param b The second input. Will not be overwritten.
+ */
+void add_matrices(Matrix * const restrict a, const Matrix * const restrict b);
 void scale_rows_destructive(Matrix * const target, const double * const scales);
 void scale_rows(const Matrix * const restrict target, const double * const restrict scales, Matrix * const restrict output);
 void transpose(const Matrix * const restrict input, Matrix * const restrict output);
+void outer_product(const double * const restrict vector_a, size_t size_a, const double * const restrict vector_b, size_t size_b, Matrix *output_matrix);

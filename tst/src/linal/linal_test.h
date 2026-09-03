@@ -20,3 +20,15 @@ char *test_transform_3x2(void);
 char *test_transform_3x3(void);
 
 void test_linal(int *);
+
+char *test_outer_product(void);
+
+char *test_outer_product(void);
+
+char *test_add_matrices(void);
+
+char *test_transpose(void);
+
+char *test_scale_rows_destructive(void);
+
+char *test_scale_rows(void);

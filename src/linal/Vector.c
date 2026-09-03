@@ -1,6 +1,7 @@
 #include "linal.h"
 #include <stdlib.h>
 #include <stdbool.h>
+#include <assert.h>
 
 void add(double * const restrict a, const double * const restrict b, const size_t dimensions) {
     for (int i = 0; i < dimensions; i++) {
@@ -16,11 +17,22 @@ void transform(const Matrix * const A, const double * restrict const x, double *
     for (int i = 0; i < height; i++)
         output[i] = A->values[i * width] * x[0];
     
-        
-
     //Does column by column so that all references to x[i] happen one after another to take advantage of memory caching.
     for (int i = 1; i < width; i++) {
         for (int j = 0; j < height; j++) 
             output[j] += A->values[j * width + i] * x[i];
+    }
+}
+
+void outer_product(const double * const restrict vector_a, size_t size_a, const double * const restrict vector_b, size_t size_b, Matrix *output_matrix) {
+    assert(size_a == output_matrix->height);
+    assert(size_b == output_matrix->width);
+    const size_t height = output_matrix->height;
+    const size_t width = output_matrix->width;
+    
+    for (int i = 0; i < size_a; i++) {
+        for (int j = 0; j < size_b; j++) {
+            output_matrix->values[i * width + j] = vector_a[i] * vector_b[j];
+        }
     }
 }

@@ -1,7 +1,6 @@
 #include <errno.h>
 #include <stdio.h>
 #include <string.h>
-
 #include "../../src/stat/gaussian.h"
 
 void write_double(FILE * const fp, const double value) {

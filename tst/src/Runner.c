@@ -14,13 +14,8 @@ int main(void) {
         perror("Error in setvbuf!");
         return errno;
     }
-    const int total = 32;
+    const int total = 37;
     int failures = 0;
-    load_resources_dir();
-    if (errno) {
-        perror("Error loading resources!");
-        return errno;
-    }
     test_linal(&failures);
     if (errno) {
         perror("Panic on linear algebra!");

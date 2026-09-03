@@ -1,5 +1,5 @@
 #include "activation_test.h"
-#include "..\Testing.h"
+#include "../Testing.h"
 #include <stdlib.h>
 
 void test_activation(int *failures) {

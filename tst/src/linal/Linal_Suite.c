@@ -11,4 +11,9 @@ void test_linal(int *failures) {
     RUN_TEST(test_transform_3x3);
     RUN_TEST(test_transform_3x2);
     RUN_TEST(test_transform_2x3);
+    RUN_TEST(test_outer_product);
+    RUN_TEST(test_add_matrices);
+    RUN_TEST(test_transpose);
+    RUN_TEST(test_scale_rows_destructive);
+    RUN_TEST(test_scale_rows);
 }

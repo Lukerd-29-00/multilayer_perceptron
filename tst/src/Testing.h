@@ -1,5 +1,5 @@
 #include "../../src/linal/linal.h"
-#include "..\..\src/multilayer_perceptron/basic/basic.h"
+#include "../../src/multilayer_perceptron/basic/basic.h"
 #include <stdio.h>
 #define MAX_LEN 10240
 
@@ -79,13 +79,7 @@ char *build_error_message(const char * const error);
 
 char *assert_double_approx(const double expected, const double actual, const double error);
 
-void load_resources_dir(void);
-
-FILE *load_resource_file(const char * const file_name);
-
 int join_path(char * restrict const root, const char * restrict const stem);
-
-int read_line(char * const buf, FILE * const stream, const int maxlen);
 
 char *enrich_error_message(char * restrict const error_message, const char * restrict const method_name);
 

@@ -14,7 +14,7 @@
 typedef struct mat {
     size_t width;
     size_t height;
-    double * restrict values;
+    double *values;
 } Matrix;
 
 #endif

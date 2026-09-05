@@ -28,7 +28,7 @@ void softmax_destructive(double *all_values, int num_values) {
 /** Note: calculates dz/dw for z as the output for the idxth number, w as the idxth number.
 * To find dx/dw for some other element of the vector x, just flip the sign.
 */
-double softmax_prime(double *input_values, int idx, int num_values) {
+double softmax_prime(const double *const input_values, int idx, int num_values) {
     double denom_constant = 0;
     for (int i = 0; i < num_values; i++) {
         if (i == idx) continue;

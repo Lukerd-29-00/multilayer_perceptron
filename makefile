@@ -1,7 +1,7 @@
 COMPILER_ARGS = -g -mconsole
 OBJECT_COMPILER_ARGS = -c $(COMPILER_ARGS)
 OBJECTS_FOLDER = build/target/objects
-OBJECTS = $(OBJECTS_FOLDER)/Matrix.o $(OBJECTS_FOLDER)/Vector.o $(OBJECTS_FOLDER)/Assert.o $(OBJECTS_FOLDER)/Test_Mat.o $(OBJECTS_FOLDER)/Test_Vector.o $(OBJECTS_FOLDER)/Relu.o $(OBJECTS_FOLDER)/Sigmoid.o $(OBJECTS_FOLDER)/Softmax.o $(OBJECTS_FOLDER)/Test_Relu.o $(OBJECTS_FOLDER)/Test_Sigmoid.o $(OBJECTS_FOLDER)/Test_Softmax.o $(OBJECTS_FOLDER)/Activation_Suite.o $(OBJECTS_FOLDER)/Linal_Suite.o $(OBJECTS_FOLDER)/Gaussian.o $(OBJECTS_FOLDER)/Test_Gaussian.o $(OBJECTS_FOLDER)/Gaussian_Suite.o $(OBJECTS_FOLDER)/Basic_Suite.o $(OBJECTS_FOLDER)/Test_Layer.o $(OBJECTS_FOLDER)/Layer.o $(OBJECTS_FOLDER)/Network.o $(OBJECTS_FOLDER)/Test_Network.o $(OBJECTS_FOLDER)/Initialization.o $(OBJECTS_FOLDER)/Test_Initialization.o $(OBJECTS_FOLDER)/Training_Suite.o
+OBJECTS = $(OBJECTS_FOLDER)/Matrix.o $(OBJECTS_FOLDER)/Vector.o $(OBJECTS_FOLDER)/Assert.o $(OBJECTS_FOLDER)/Test_Mat.o $(OBJECTS_FOLDER)/Test_Vector.o $(OBJECTS_FOLDER)/Relu.o $(OBJECTS_FOLDER)/Sigmoid.o $(OBJECTS_FOLDER)/Softmax.o $(OBJECTS_FOLDER)/Test_Relu.o $(OBJECTS_FOLDER)/Test_Sigmoid.o $(OBJECTS_FOLDER)/Test_Softmax.o $(OBJECTS_FOLDER)/Activation_Suite.o $(OBJECTS_FOLDER)/Linal_Suite.o $(OBJECTS_FOLDER)/Gaussian.o $(OBJECTS_FOLDER)/Test_Gaussian.o $(OBJECTS_FOLDER)/Gaussian_Suite.o $(OBJECTS_FOLDER)/Basic_Suite.o $(OBJECTS_FOLDER)/Test_Layer.o $(OBJECTS_FOLDER)/Layer.o $(OBJECTS_FOLDER)/Network.o $(OBJECTS_FOLDER)/Test_Network.o $(OBJECTS_FOLDER)/Initialization.o $(OBJECTS_FOLDER)/Test_Initialization.o $(OBJECTS_FOLDER)/Training_Suite.o $(OBJECTS_FOLDER)/Backprop.o
 
 tst/src/Testing.h tst/src/linal/linal_test.h: src/linal/linal.h
 
@@ -9,7 +9,7 @@ tst/src/activation/activation_test.h: src/activation/activation.h
 
 src/multilayer_perceptron/basic/basic.h: src/linal/linal.h
 
-src/multilayer_perceptron/training/training.h: src/multilayer_perceptron/basic/basic.h
+src/multilayer_perceptron/training/training.h: src/multilayer_perceptron/basic/basic.h src/linal/linal.h
 
 build:
 	python3 make_build_folder.py
@@ -43,6 +43,9 @@ $(OBJECTS_FOLDER)/Network.o: src/multilayer_perceptron/basic/Network.c src/multi
 $(OBJECTS_FOLDER)/Initialization.o: src/multilayer_perceptron/training/Initialization.c src/multilayer_perceptron/training/training.h src/stat/gaussian.h 
 	gcc $< -o $@ $(OBJECT_COMPILER_ARGS)
 
+$(OBJECTS_FOLDER)/Backprop.o: src\multilayer_perceptron\training\Backprop.c src\multilayer_perceptron\training\training.h src\multilayer_perceptron\basic\basic.h src\linal\linal.h src\activation\activation.h
+	gcc $< -o $@ $(OBJECT_COMPILER_ARGS)
+
 $(OBJECTS_FOLDER)/Assert.o: tst/src/Assert.c tst/src/Testing.h src/linal/linal.h
 	gcc $< -o $@ $(OBJECT_COMPILER_ARGS)
 
@@ -67,9 +70,6 @@ $(OBJECTS_FOLDER)/Test_Sigmoid.o: tst/src/activation/Test_Sigmoid.c tst/src/acti
 $(OBJECTS_FOLDER)/Test_Softmax.o: tst/src/activation/Test_Softmax.c tst/src/activation/activation_test.h src/activation/activation.h
 	gcc $< -o $@ $(OBJECT_COMPILER_ARGS)
 
-$(OBJECTS_FOLDER)/Test_Initialization.o: tst/src/multilayer_perceptron/training/Test_Initialization.c tst/src/multilayer_perceptron/training/test_training.h src/multilayer_perceptron/training/training.h tst/src/Testing.h
-	gcc $< -o $@ $(OBJECT_COMPILER_ARGS)
-
 $(OBJECTS_FOLDER)/Activation_Suite.o: tst/src/activation/Activation_Suite.c tst/src/activation/activation_test.h tst/src/Testing.h
 	gcc $< -o $@ $(OBJECT_COMPILER_ARGS)
 
@@ -80,6 +80,12 @@ $(OBJECTS_FOLDER)/Test_Layer.o: tst/src/multilayer_perceptron/basic/Test_Layer.c
 	gcc $< -o $@ $(OBJECT_COMPILER_ARGS)
 
 $(OBJECTS_FOLDER)/Test_Network.o: tst/src/multilayer_perceptron/basic/Test_Network.c tst/src/multilayer_perceptron/basic/test_basic.h src/linal/linal.h src/multilayer_perceptron/basic/basic.h tst/src/Testing.h
+	gcc $< -o $@ $(OBJECT_COMPILER_ARGS)
+
+$(OBJECTS_FOLDER)/Test_Initialization.o: tst/src/multilayer_perceptron/training/Test_Initialization.c tst/src/multilayer_perceptron/training/test_training.h src/multilayer_perceptron/training/training.h tst/src/Testing.h
+	gcc $< -o $@ $(OBJECT_COMPILER_ARGS)
+
+$(OBJECTS_FOLDER)/Test_Backprop.o: tst/src/multilayer_perceptron/training/Test_Backprop.c tst\src\multilayer_perceptron\training\test_training.h tst\src\Testing.h src\multilayer_perceptron\training\training.h src\multilayer_perceptron\basic\basic.h src\activation\activation.h
 	gcc $< -o $@ $(OBJECT_COMPILER_ARGS)
 	
 $(OBJECTS_FOLDER)/Gaussian_Suite.o: tst/src/stat/Gaussian_Suite.c tst/src/stat/test_gaussian.h tst/src/Testing.h

@@ -1,5 +1,7 @@
 #include <math.h>
 #include "activation.h"
+#include "../linal/linal.h"
+#include <assert.h>
 
 void softmax(double * restrict all_values, int num_values, double * restrict output) {
     double denominator = 0;
@@ -25,18 +27,20 @@ void softmax_destructive(double *all_values, int num_values) {
     }
 }
 
-/** Note: calculates dz/dw for z as the output for the idxth number, w as the idxth number.
-* To find dx/dw for some other element of the vector x, just flip the sign.
-*/
-double softmax_prime(double *input_values, int idx, int num_values) {
-    double denom_constant = 0;
-    for (int i = 0; i < num_values; i++) {
-        if (i == idx) continue;
-        denom_constant += exp(input_values[i]);
+void softmax_prime(const double * const restrict softmax_outputs, Matrix * const output_matrix) {
+    assert(output_matrix->height == output_matrix->width);
+    const size_t width = output_matrix->width;
+    //possible optimization: only half the matrix needs to be computed
+    //Opposite sides of the diagnonal are mirrored
+    double *values = output_matrix->values;
+    for (int i = 0; i < output_matrix->height; i++) {
+        double Si = softmax_outputs[i];
+        for (int j = 0; j < i; j++) {
+            values[i * width + j] = -Si * softmax_outputs[j];
+        }
+        values[i * width + i] = Si * (1 - Si);
+        for (int j = i + 1; j < output_matrix->width; j++) {
+            values[i * width + j] = -Si * softmax_outputs[j];
+        }
     }
-
-    double ex = exp(input_values[idx]);
-    double denom = denom_constant + ex;
-    denom *= denom;
-    return (denom_constant * ex) / (denom);
 }

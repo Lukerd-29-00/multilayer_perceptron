@@ -33,13 +33,24 @@ char *test_softmax_destructive() {
 }
 
 char *test_softmax_prime() {
-    double input_vec[4] = {-1, -1.4, -1.01, -0.97};
+    double input_vec[3] = {0.25, 0.5, 0.25};
+    Matrix *output_matrix = initialize_matrix(3, 3);
+
+    softmax_prime(input_vec, output_matrix);
+    double *values = output_matrix->values;
     
     char *error_message = NULL;
 
-    ASSERT_DOUBLE(0.19753251352601292, softmax_prime(input_vec, 0, 4), ERROR_MARGIN, "softmax prime");
-    ASSERT_DOUBLE(0.14863288441989186, softmax_prime(input_vec, 1, 4), ERROR_MARGIN, "softmax prime");
-    ASSERT_DOUBLE(0.19629020254516497, softmax_prime(input_vec, 2, 4), ERROR_MARGIN, "softmax prime");
-    ASSERT_DOUBLE(0.2012445311960707, softmax_prime(input_vec, 3, 4), ERROR_MARGIN, "softmax prime");
+    ASSERT_DOUBLE(0.1875, values[0], ERROR_MARGIN, "softmax prime");
+    ASSERT_DOUBLE(-0.125, values[1], ERROR_MARGIN, "softmax prime");
+    ASSERT_DOUBLE(-0.0625, values[2], ERROR_MARGIN, "softmax prime");
+    
+    ASSERT_DOUBLE(-0.125, values[3], ERROR_MARGIN, "softmax prime");
+    ASSERT_DOUBLE(0.25, values[4], ERROR_MARGIN, "softmax prime");
+    ASSERT_DOUBLE(-0.125, values[5], ERROR_MARGIN, "softmax prime");
+
+    ASSERT_DOUBLE(-0.0625, values[6], ERROR_MARGIN, "softmax prime");
+    ASSERT_DOUBLE(-0.125, values[7], ERROR_MARGIN, "softmax prime");
+    ASSERT_DOUBLE(0.1875, values[8], ERROR_MARGIN, "softmax prime");
     return NULL;
 }

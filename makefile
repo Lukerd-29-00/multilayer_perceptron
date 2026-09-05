@@ -3,6 +3,8 @@ OBJECT_COMPILER_ARGS = -c $(COMPILER_ARGS)
 OBJECTS_FOLDER = build/target/objects
 OBJECTS = $(OBJECTS_FOLDER)/Matrix.o $(OBJECTS_FOLDER)/Vector.o $(OBJECTS_FOLDER)/Assert.o $(OBJECTS_FOLDER)/Test_Mat.o $(OBJECTS_FOLDER)/Test_Vector.o $(OBJECTS_FOLDER)/Relu.o $(OBJECTS_FOLDER)/Sigmoid.o $(OBJECTS_FOLDER)/Softmax.o $(OBJECTS_FOLDER)/Test_Relu.o $(OBJECTS_FOLDER)/Test_Sigmoid.o $(OBJECTS_FOLDER)/Test_Softmax.o $(OBJECTS_FOLDER)/Activation_Suite.o $(OBJECTS_FOLDER)/Linal_Suite.o $(OBJECTS_FOLDER)/Gaussian.o $(OBJECTS_FOLDER)/Test_Gaussian.o $(OBJECTS_FOLDER)/Gaussian_Suite.o $(OBJECTS_FOLDER)/Basic_Suite.o $(OBJECTS_FOLDER)/Test_Layer.o $(OBJECTS_FOLDER)/Layer.o $(OBJECTS_FOLDER)/Network.o $(OBJECTS_FOLDER)/Test_Network.o $(OBJECTS_FOLDER)/Initialization.o $(OBJECTS_FOLDER)/Test_Initialization.o $(OBJECTS_FOLDER)/Training_Suite.o
 
+src/activation/activation.h: src/linal/linal.h
+
 tst/src/Testing.h tst/src/linal/linal_test.h: src/linal/linal.h
 
 tst/src/activation/activation_test.h: src/activation/activation.h
@@ -25,7 +27,7 @@ $(OBJECTS_FOLDER)/Vector.o: src/linal/Vector.c src/linal/linal.h
 $(OBJECTS_FOLDER)/Relu.o: src/activation/Relu.c src/activation/activation.h
 	gcc $< -o $@ $(OBJECT_COMPILER_ARGS)
 
-$(OBJECTS_FOLDER)/Sigmoid.o: src/activation/Sigmoid.c src/activation/activation.h
+$(OBJECTS_FOLDER)/Sigmoid.o: src/activation/Sigmoid.c src/activation/activation.h src/linal/linal.h
 	gcc $< -o $@ $(OBJECT_COMPILER_ARGS)
 
 $(OBJECTS_FOLDER)/Softmax.o: src/activation/Softmax.c src/activation/activation.h

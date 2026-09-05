@@ -35,6 +35,8 @@ void transpose(const Matrix * const restrict input, Matrix * const restrict outp
     }
 }
 
+//Possible optimization: remove scaling rows. Do transformation first, then scale the vector rows
+//That way you can get the same outcome with fewer multiplications.
 void scale_rows_destructive(Matrix * const target, const double * const scales) {
     for (int i = 0; i < target->height; i++) {
         for (int j = 0; j < target->width; j++) {

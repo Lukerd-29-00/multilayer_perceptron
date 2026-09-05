@@ -13,11 +13,12 @@ void transform(const Matrix * const A, const double * restrict const x, double *
     const size_t height = A->height;
     const size_t width = A->width;
     
-    
+    //possible optimization: divide the problem into squares of the matrix.
+    //Do multiplications on the columns first to make use of pipelining, then add down the rows one pair of columns at a time for the same reason.
+    //Dividing it into squares makes it so all computed values can fit into the memory cache.
     for (int i = 0; i < height; i++)
         output[i] = A->values[i * width] * x[0];
     
-    //Does column by column so that all references to x[i] happen one after another to take advantage of memory caching.
     for (int i = 1; i < width; i++) {
         for (int j = 0; j < height; j++) 
             output[j] += A->values[j * width + i] * x[i];

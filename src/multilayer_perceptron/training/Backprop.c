@@ -6,10 +6,12 @@
 #include <stdlib.h>
 #include <assert.h>
 
-thread_local Scratchpad_t scratchpad;
+thread_local Scratchpad_t scratchpad = {.size = 0, .weight_transform = NULL, .activation_derivative = NULL};
 
-void initialize_backprop(const Network * const network) {
-    scratchpad.size = network->largest_layer_size;
+void initialize_backprop(const size_t largest_size) {
+    assert(scratchpad.activation_derivative == NULL);
+    assert(scratchpad.weight_transform == NULL);
+    scratchpad.size = largest_size;
     
     scratchpad.activation_derivative = malloc(sizeof(double) * scratchpad.size);
     if (scratchpad.activation_derivative == NULL) {
@@ -18,14 +20,19 @@ void initialize_backprop(const Network * const network) {
     scratchpad.weight_transform = initialize_matrix(scratchpad.size, scratchpad.size);
     if (scratchpad.weight_transform == NULL) {
         free(scratchpad.activation_derivative);
+        scratchpad.activation_derivative = NULL;
         return;
     }
     
 }
 
 void teardown_backprop() {
+    assert(scratchpad.activation_derivative != NULL);
+    assert(scratchpad.weight_transform != NULL);
     free(scratchpad.activation_derivative);
     destroy_matrix(scratchpad.weight_transform);
+    scratchpad.activation_derivative = NULL;
+    scratchpad.weight_transform = NULL;
 }
 
 void mask_scratchpad_size(const size_t height, const size_t width) {
@@ -40,6 +47,10 @@ void revert_scratchpad_size() {
 
 
 void calculate_backprop_for_run(const Network * const network, const Layer_Calcs_t * const calcs, const double *correct_answer, Backprop_Output_t *output) {
+    assert(scratchpad.activation_derivative != NULL);
+    assert(scratchpad.weight_transform != NULL);
+    assert(network->layers_count > 1);
+
     size_t last_layer_idx = network->layers_count - 1;
     Layer last = network->layers_array[last_layer_idx];
     double *output_values = calcs[last_layer_idx].output_values;
@@ -50,24 +61,24 @@ void calculate_backprop_for_run(const Network * const network, const Layer_Calcs
     for (int i = last_layer_idx; i > 1; i--) { //Skipping the first hidden layer is intentional
         
         //output[i-1] corresponds to layer i, because the input layer has no weights
-        calculate_weight_derivs(&(network->layers_array[i]), calcs[i-1].output_values, output[i-1].bias_derivs, &(output[i-1].weight_derivs));
+        calculate_weight_derivs(&(network->layers_array[i]), calcs[i-1].output_values, output[i-1].bias_derivs, output[i-1].weight_derivs);
 
         calculate_dc_dinput_hidden(&(network->layers_array[i]), calcs[i-1].input_values, output[i-1].bias_derivs, network->layers_array[i-1].func, output[i-2].bias_derivs);
     }
 
-    calculate_weight_derivs(&(network->layers_array[1]), calcs[0].output_values, output[1].bias_derivs, &(output[1].weight_derivs));
+    calculate_weight_derivs(&(network->layers_array[1]), calcs[0].output_values, output[0].bias_derivs, output[0].weight_derivs);
 }
 
 void calculate_dc_dinput_hidden(const Layer * const hidden_layer, const double * const restrict input_values, const double * const restrict derivs, const Activation activation, double * const restrict output) {
     Layer current_layer = *hidden_layer;
     derivative_of(activation, input_values, current_layer.fan_in, scratchpad.activation_derivative);
-    mask_scratchpad_size(current_layer.incoming_weights.height, current_layer.incoming_weights.width);
+    mask_scratchpad_size(current_layer.incoming_weights.width, current_layer.incoming_weights.height);
     
     transpose(&current_layer.incoming_weights, scratchpad.weight_transform);
+
+    //This is probably not optimal. Involves redundant multiplications.
     scale_rows_destructive(scratchpad.weight_transform, scratchpad.activation_derivative);
     transform(scratchpad.weight_transform, derivs, output);
-    scratchpad.weight_transform->height = height;
-    scratchpad.weight_transform->width = width;
 
     revert_scratchpad_size();
 }
@@ -120,6 +131,6 @@ void update_network(Network * const network, const Backprop_Output_t * const bac
         Layer layer = network->layers_array[i];
         Backprop_Output_t output = back_propogation_outputs[i-1];
         add(layer.biases, output.bias_derivs, layer.size);
-        add_matrices(&layer.incoming_weights, &output.weight_derivs);
+        add_matrices(&layer.incoming_weights, output.weight_derivs);
     }
 }

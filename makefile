@@ -1,7 +1,7 @@
-COMPILER_ARGS = -g -mconsole
+COMPILER_ARGS = -g -mconsole -pthread -Og
 OBJECT_COMPILER_ARGS = -c $(COMPILER_ARGS)
 OBJECTS_FOLDER = build/target/objects
-OBJECTS = $(OBJECTS_FOLDER)/Matrix.o $(OBJECTS_FOLDER)/Vector.o $(OBJECTS_FOLDER)/Assert.o $(OBJECTS_FOLDER)/Test_Mat.o $(OBJECTS_FOLDER)/Test_Vector.o $(OBJECTS_FOLDER)/Relu.o $(OBJECTS_FOLDER)/Sigmoid.o $(OBJECTS_FOLDER)/Softmax.o $(OBJECTS_FOLDER)/Test_Relu.o $(OBJECTS_FOLDER)/Test_Sigmoid.o $(OBJECTS_FOLDER)/Test_Softmax.o $(OBJECTS_FOLDER)/Activation_Suite.o $(OBJECTS_FOLDER)/Linal_Suite.o $(OBJECTS_FOLDER)/Gaussian.o $(OBJECTS_FOLDER)/Test_Gaussian.o $(OBJECTS_FOLDER)/Gaussian_Suite.o $(OBJECTS_FOLDER)/Basic_Suite.o $(OBJECTS_FOLDER)/Test_Layer.o $(OBJECTS_FOLDER)/Layer.o $(OBJECTS_FOLDER)/Network.o $(OBJECTS_FOLDER)/Test_Network.o $(OBJECTS_FOLDER)/Initialization.o $(OBJECTS_FOLDER)/Test_Initialization.o $(OBJECTS_FOLDER)/Training_Suite.o $(OBJECTS_FOLDER)/Backprop.o
+OBJECTS = $(OBJECTS_FOLDER)/Matrix.o $(OBJECTS_FOLDER)/Vector.o $(OBJECTS_FOLDER)/Assert.o $(OBJECTS_FOLDER)/Test_Mat.o $(OBJECTS_FOLDER)/Test_Vector.o $(OBJECTS_FOLDER)/Relu.o $(OBJECTS_FOLDER)/Sigmoid.o $(OBJECTS_FOLDER)/Softmax.o $(OBJECTS_FOLDER)/Test_Relu.o $(OBJECTS_FOLDER)/Test_Sigmoid.o $(OBJECTS_FOLDER)/Test_Softmax.o $(OBJECTS_FOLDER)/Activation_Suite.o $(OBJECTS_FOLDER)/Linal_Suite.o $(OBJECTS_FOLDER)/Gaussian.o $(OBJECTS_FOLDER)/Test_Gaussian.o $(OBJECTS_FOLDER)/Gaussian_Suite.o $(OBJECTS_FOLDER)/Basic_Suite.o $(OBJECTS_FOLDER)/Test_Layer.o $(OBJECTS_FOLDER)/Layer.o $(OBJECTS_FOLDER)/Network.o $(OBJECTS_FOLDER)/Test_Network.o $(OBJECTS_FOLDER)/Initialization.o $(OBJECTS_FOLDER)/Test_Initialization.o $(OBJECTS_FOLDER)/Training_Suite.o $(OBJECTS_FOLDER)/Backprop.o $(OBJECTS_FOLDER)/Test_Backprop.o
 
 src/activation/activation.h: src/linal/linal.h
 

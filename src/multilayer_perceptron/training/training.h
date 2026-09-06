@@ -11,7 +11,7 @@ typedef struct memo {
 } Layer_Calcs_t;
 
 typedef struct back {
-    Matrix weight_derivs;
+    Matrix *weight_derivs;
     double *bias_derivs;
 } Backprop_Output_t;
 
@@ -30,7 +30,7 @@ void initialize_layer_he(Layer layer);
 void initialize_for_training(Network *network);
 
 
-void initialize_backprop(const Network * const network);
+void initialize_backprop(const size_t largest_size);
 void teardown_backprop();
 void mask_scratchpad_size(const size_t height, const size_t width);
 void revert_scratchpad_size();

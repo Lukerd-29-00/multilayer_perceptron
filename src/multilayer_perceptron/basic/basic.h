@@ -12,7 +12,7 @@ typedef enum {SIGMOID, RELU, SOFTMAX, NONE} Activation;
 typedef struct lay {
     size_t size;
     Matrix incoming_weights;
-    double * restrict biases;
+    double * biases;
     Activation func;
     size_t fan_in;
     size_t fan_out;

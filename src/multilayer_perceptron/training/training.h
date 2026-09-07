@@ -21,6 +21,11 @@ typedef struct scratch {
     size_t size;
 } Scratchpad_t;
 
+typedef struct training_run {
+    double *input_values;
+    double *correct_answer;
+} Training_Run_t;
+
 #endif
 
 double glorot(size_t fan_in, size_t fan_out);

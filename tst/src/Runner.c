@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include "multilayer_perceptron/basic/test_basic.h"
 #include "multilayer_perceptron/training/test_training.h"
+#include "retrieval/test_retrieval.h"
 
 int main(void) {
     setvbuf(stdout, NULL, _IONBF, 0);
@@ -14,7 +15,7 @@ int main(void) {
         perror("Error in setvbuf!");
         return errno;
     }
-    const int total = 46;
+    const int total = 48;
     int failures = 0;
     test_linal(&failures);
     if (errno) {
@@ -42,6 +43,12 @@ int main(void) {
     training_suite(&failures);
     if (errno) {
         perror("Panic on perceptron training functions!");
+        return 1;
+    }
+
+    test_retrieval(&failures);
+    if (errno) {
+        perror("Panic on retrieval testing functions!");
         return 1;
     }
 

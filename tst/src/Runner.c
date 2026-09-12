@@ -15,7 +15,7 @@ int main(void) {
         perror("Error in setvbuf!");
         return errno;
     }
-    const int total = 48;
+    const int total = 49;
     int failures = 0;
     test_linal(&failures);
     if (errno) {

@@ -27,6 +27,8 @@ char *test_outer_product(void);
 
 char *test_add_matrices(void);
 
+char *test_scale_matrix(void);
+
 char *test_transpose(void);
 
 char *test_scale_rows_destructive(void);

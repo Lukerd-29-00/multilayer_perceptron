@@ -25,6 +25,12 @@ void add_matrices(Matrix * const restrict a, const Matrix * const restrict b) {
     }
 }
 
+void scale_matrix(Matrix * A, const double scalar) {
+    for (int i = 0; i < A->width * A->height; i++) {
+        A->values[i] *= scalar;
+    }
+}
+
 void transpose(const Matrix * const restrict input, Matrix * const restrict output) {
     assert(input->height == output->width);
     assert(input->width == output->height);

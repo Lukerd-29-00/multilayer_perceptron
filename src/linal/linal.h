@@ -72,6 +72,7 @@ void destroy_matrix(Matrix * const mat);
  * @param b The second input. Will not be overwritten.
  */
 void add_matrices(Matrix * const restrict a, const Matrix * const restrict b);
+void scale_matrix(Matrix * A, const double scalar);
 void scale_rows_destructive(Matrix * const target, const double * const scales);
 void scale_rows(const Matrix * const restrict target, const double * const restrict scales, Matrix * const restrict output);
 void transpose(const Matrix * const restrict input, Matrix * const restrict output);

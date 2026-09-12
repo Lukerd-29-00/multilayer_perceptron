@@ -67,6 +67,28 @@ char *test_add_matrices(void) {
     return NULL;
 }
 
+char *test_scale_matrix(void) {
+    char *error_message = NULL;
+    Matrix *a = initialize_matrix(2, 3);
+    a->values[0] = 1;
+    a->values[1] = -1.;
+    a->values[2] = 2.;
+    a->values[3] = -2;
+    a->values[4] = 3.5;
+    a->values[5] = -3.5;
+
+    scale_matrix(a, 0.5);
+
+    ASSERT_DOUBLE(0.5, a->values[0], 0.01, "test scale");
+    ASSERT_DOUBLE(-0.5, a->values[1], 0.01, "test scale");
+    ASSERT_DOUBLE(1, a->values[2], 0.01, "test scale");
+    ASSERT_DOUBLE(-1, a->values[3], 0.01, "test scale");
+    ASSERT_DOUBLE(1.75, a->values[4], 0.01, "test scale");
+    ASSERT_DOUBLE(-1.75, a->values[5], 0.01, "test scale");
+
+    return NULL;
+}
+
 char *test_transpose(void) {
     char *error_message = NULL;
     Matrix *a = initialize_matrix(3, 2);

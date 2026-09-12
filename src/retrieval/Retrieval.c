@@ -8,56 +8,56 @@ const char *sample = "select id FROM TRAINING_RUN WHERE learnset = ?1 LIMIT ?2 O
 const char *learnset_size_q = "SELECT COUNT(*) FROM TRAINING_RUN WHERE learnset = ?1";
 const char *select_input_data = "select value FROM TRAINING_RUN_DATA WHERE input_or_output = 'input' AND training_run = ?1 ORDER BY idx";
 const char *select_output_data = "select value FROM TRAINING_RUN_DATA WHERE input_or_output = 'output' AND training_run = ?1 ORDER BY idx";
-sqlite3 *conn;
+sqlite3 *retrieval_conn;
 
 sqlite3_stmt *learnset_size_stmt;
 sqlite3_stmt *sample_stmt;
 sqlite3_stmt *select_input_data_stmt;
 sqlite3_stmt *select_output_data_stmt;
 
-void initialize_retrieval(sqlite3 *input_conn) {
-    conn = input_conn;
+void initialize_retrieval(sqlite3 *input_retrieval_conn) {
+    retrieval_conn = input_retrieval_conn;
     int ok = sqlite3_prepare_v2(
-        conn,
+        retrieval_conn,
         learnset_size_q,
         128,
         &learnset_size_stmt,
         NULL
     );
     if (ok != SQLITE_OK) {
-        errno = sqlite3_errcode(conn);
+        errno = sqlite3_errcode(retrieval_conn);
         return;
     }
 
     ok = sqlite3_prepare_v2(
-        conn,
+        retrieval_conn,
         sample,
         128,
         &sample_stmt,
         NULL
     );
     if (ok != SQLITE_OK) {
-        errno = sqlite3_errcode(conn);
+        errno = sqlite3_errcode(retrieval_conn);
         sqlite3_finalize(learnset_size_stmt);
         return;
     }
 
     ok = sqlite3_prepare_v2(
-        conn,
+        retrieval_conn,
         select_input_data,
         128,
         &select_input_data_stmt,
         NULL
     );
     if (ok != SQLITE_OK) {
-        errno = sqlite3_errcode(conn);
+        errno = sqlite3_errcode(retrieval_conn);
         sqlite3_finalize(learnset_size_stmt);
         sqlite3_finalize(sample_stmt);
         return;
     }
 
     ok = sqlite3_prepare_v2(
-        conn,
+        retrieval_conn,
         select_output_data,
         128,
         &select_output_data_stmt,
@@ -65,7 +65,7 @@ void initialize_retrieval(sqlite3 *input_conn) {
     );
 
     if (ok != SQLITE_OK) {
-        errno = sqlite3_errcode(conn);
+        errno = sqlite3_errcode(retrieval_conn);
         sqlite3_finalize(learnset_size_stmt);
         sqlite3_finalize(sample_stmt);
         sqlite3_finalize(select_input_data_stmt);
@@ -91,7 +91,7 @@ size_t learnset_size(const char *learnset) {
         errno = NO_ROWS_FOUND;
         return FAILURE;
     } else if (ok != SQLITE_ROW) {
-        errno = sqlite3_errcode(conn);
+        errno = sqlite3_errcode(retrieval_conn);
         return FAILURE;
     }
     
@@ -102,7 +102,7 @@ size_t learnset_size(const char *learnset) {
         errno = EXCESS_ROWS_FOUND;
         return FAILURE;
     } else if (ok != SQLITE_DONE) {
-        errno = sqlite3_errcode(conn);
+        errno = sqlite3_errcode(retrieval_conn);
         return FAILURE;
     }
 
@@ -121,7 +121,7 @@ void load(const char *learnset, const size_t sample_idx, const size_t sample_siz
     while (is_done == SQLITE_ROW) {
         int id = sqlite3_column_int(sample_stmt, 0);
         load_training_run_data(id, &training_runs[i]);
-        if (sqlite3_errcode(conn) != 0) {
+        if (sqlite3_errcode(retrieval_conn) != 0) {
             break;
         }
         is_done = sqlite3_step(sample_stmt);
@@ -130,8 +130,8 @@ void load(const char *learnset, const size_t sample_idx, const size_t sample_siz
 
     sqlite3_reset(sample_stmt);
     sqlite3_clear_bindings(sample_stmt);
-    if (sqlite3_errcode(conn) != 0) {
-        errno = sqlite3_errcode(conn);
+    if (sqlite3_errcode(retrieval_conn) != 0) {
+        errno = sqlite3_errcode(retrieval_conn);
     }
 }
 
@@ -151,7 +151,7 @@ void load_training_run_data(int id, Training_Run_t *training_run) {
     int ok = sqlite3_reset(select_input_data_stmt);
     sqlite3_clear_bindings(select_input_data_stmt);
     if (ok != SQLITE_OK) {
-        errno = sqlite3_errcode(conn);
+        errno = sqlite3_errcode(retrieval_conn);
         return;
     }
 

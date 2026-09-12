@@ -2,7 +2,9 @@ LIBRARIES = $(MAKE_C_LIBRARIES)
 COMPILER_ARGS = -I $(MAKE_C_LIBRARIES) -L $(MAKE_C_LIBRARIES) -g -mconsole -pthread -Og
 OBJECT_COMPILER_ARGS = -c $(COMPILER_ARGS)
 OBJECTS_FOLDER = build/target/objects
-OBJECTS = $(OBJECTS_FOLDER)/Matrix.o $(OBJECTS_FOLDER)/Vector.o $(OBJECTS_FOLDER)/Assert.o $(OBJECTS_FOLDER)/Test_Mat.o $(OBJECTS_FOLDER)/Test_Vector.o $(OBJECTS_FOLDER)/Relu.o $(OBJECTS_FOLDER)/Sigmoid.o $(OBJECTS_FOLDER)/Softmax.o $(OBJECTS_FOLDER)/Test_Relu.o $(OBJECTS_FOLDER)/Test_Sigmoid.o $(OBJECTS_FOLDER)/Test_Softmax.o $(OBJECTS_FOLDER)/Activation_Suite.o $(OBJECTS_FOLDER)/Linal_Suite.o $(OBJECTS_FOLDER)/Gaussian.o $(OBJECTS_FOLDER)/Test_Gaussian.o $(OBJECTS_FOLDER)/Gaussian_Suite.o $(OBJECTS_FOLDER)/Basic_Suite.o $(OBJECTS_FOLDER)/Test_Layer.o $(OBJECTS_FOLDER)/Layer.o $(OBJECTS_FOLDER)/Network.o $(OBJECTS_FOLDER)/Test_Network.o $(OBJECTS_FOLDER)/Initialization.o $(OBJECTS_FOLDER)/Test_Initialization.o $(OBJECTS_FOLDER)/Training_Suite.o $(OBJECTS_FOLDER)/Backprop.o $(OBJECTS_FOLDER)/Test_Backprop.o $(OBJECTS_FOLDER)/Retrieval.o $(OBJECTS_FOLDER)/Test_Retrieval.o $(OBJECTS_FOLDER)/Retrieval_Suite.o
+OBJECTS = $(OBJECTS_FOLDER)/Matrix.o $(OBJECTS_FOLDER)/Vector.o $(OBJECTS_FOLDER)/Assert.o $(OBJECTS_FOLDER)/Test_Mat.o $(OBJECTS_FOLDER)/Test_Vector.o $(OBJECTS_FOLDER)/Relu.o $(OBJECTS_FOLDER)/Sigmoid.o $(OBJECTS_FOLDER)/Softmax.o $(OBJECTS_FOLDER)/Test_Relu.o $(OBJECTS_FOLDER)/Test_Sigmoid.o $(OBJECTS_FOLDER)/Test_Softmax.o $(OBJECTS_FOLDER)/Activation_Suite.o $(OBJECTS_FOLDER)/Linal_Suite.o $(OBJECTS_FOLDER)/Gaussian.o $(OBJECTS_FOLDER)/Test_Gaussian.o $(OBJECTS_FOLDER)/Gaussian_Suite.o $(OBJECTS_FOLDER)/Basic_Suite.o $(OBJECTS_FOLDER)/Test_Layer.o $(OBJECTS_FOLDER)/Layer.o $(OBJECTS_FOLDER)/Network.o $(OBJECTS_FOLDER)/Test_Network.o $(OBJECTS_FOLDER)/Initialization.o $(OBJECTS_FOLDER)/Test_Initialization.o $(OBJECTS_FOLDER)/Training_Suite.o $(OBJECTS_FOLDER)/Backprop.o $(OBJECTS_FOLDER)/Test_Backprop.o $(OBJECTS_FOLDER)/Retrieval.o $(OBJECTS_FOLDER)/Test_Retrieval.o $(OBJECTS_FOLDER)/Retrieval_Suite.o $(OBJECTS_FOLDER)/Network_Retrieval.o $(OBJECTS_FOLDER)/Test_Network_Retrieval.o
+
+src/retrieval/retrieval.h: src/multilayer_perceptron/training/training.h
 
 src/activation/activation.h: src/linal/linal.h
 
@@ -20,103 +22,109 @@ build:
 $(OBJECTS): build
 
 $(OBJECTS_FOLDER)/Matrix.o: src/linal/Matrix.c src/linal/linal.h build
-	gcc $< -o $@  $(OBJECT_COMPILER_ARGS)
+	gcc $(OBJECT_COMPILER_ARGS) $< -o $@
 
 $(OBJECTS_FOLDER)/Vector.o: src/linal/Vector.c src/linal/linal.h
-	gcc $< -o $@ $(OBJECT_COMPILER_ARGS)
+	gcc $(OBJECT_COMPILER_ARGS) $< -o $@
 
 $(OBJECTS_FOLDER)/Relu.o: src/activation/Relu.c src/activation/activation.h
-	gcc $< -o $@ $(OBJECT_COMPILER_ARGS)
+	gcc $(OBJECT_COMPILER_ARGS) $< -o $@
 
 $(OBJECTS_FOLDER)/Sigmoid.o: src/activation/Sigmoid.c src/activation/activation.h src/linal/linal.h
-	gcc $< -o $@ $(OBJECT_COMPILER_ARGS)
+	gcc $(OBJECT_COMPILER_ARGS) $< -o $@
 
 $(OBJECTS_FOLDER)/Softmax.o: src/activation/Softmax.c src/activation/activation.h
-	gcc $< -o $@ $(OBJECT_COMPILER_ARGS)
+	gcc $(OBJECT_COMPILER_ARGS) $< -o $@
 
 $(OBJECTS_FOLDER)/Gaussian.o: src/stat/Gaussian.c src/stat/gaussian.h
-	gcc $< -o $@ $(OBJECT_COMPILER_ARGS)
+	gcc $(OBJECT_COMPILER_ARGS) $< -o $@
 
 $(OBJECTS_FOLDER)/Layer.o: src/multilayer_perceptron/basic/Layer.c src/multilayer_perceptron/basic/basic.h src/linal/linal.h src/activation/activation.h
-	gcc $< -o $@ $(OBJECT_COMPILER_ARGS)
+	gcc $(OBJECT_COMPILER_ARGS) $< -o $@
 
 $(OBJECTS_FOLDER)/Network.o: src/multilayer_perceptron/basic/Network.c src/multilayer_perceptron/basic/basic.h src/linal/linal.h
-	gcc $< -o $@ $(OBJECT_COMPILER_ARGS)
+	gcc $(OBJECT_COMPILER_ARGS) $< -o $@
 
 $(OBJECTS_FOLDER)/Initialization.o: src/multilayer_perceptron/training/Initialization.c src/multilayer_perceptron/training/training.h src/stat/gaussian.h 
-	gcc $< -o $@ $(OBJECT_COMPILER_ARGS)
+	gcc $(OBJECT_COMPILER_ARGS) $< -o $@
 
 $(OBJECTS_FOLDER)/Backprop.o: src\multilayer_perceptron\training\Backprop.c src\multilayer_perceptron\training\training.h src\multilayer_perceptron\basic\basic.h src\linal\linal.h src\activation\activation.h
-	gcc $< -o $@ $(OBJECT_COMPILER_ARGS)
+	gcc $(OBJECT_COMPILER_ARGS) $< -o $@
+
+$(OBJECTS_FOLDER)/Network_Retrieval.o: src/retrieval/Network_Retrieval.c src/retrieval/retrieval.h src/multilayer_perceptron/basic/basic.h
+	gcc $(OBJECT_COMPILER_ARGS) $< -o $@
 
 $(OBJECTS_FOLDER)/Retrieval.o: src/retrieval/retrieval.c src/retrieval/retrieval.h
-	gcc $< -o $@ $(OBJECT_COMPILER_ARGS)
+	gcc $(OBJECT_COMPILER_ARGS) $< -o $@
 
 $(OBJECTS_FOLDER)/Assert.o: tst/src/Assert.c tst/src/Testing.h src/linal/linal.h
-	gcc $< -o $@ $(OBJECT_COMPILER_ARGS)
+	gcc $(OBJECT_COMPILER_ARGS) $< -o $@
 
 $(OBJECTS_FOLDER)/Runner.o: tst/src/Runner.c tst/src/Testing.h tst/src/linal/linal_test.h tst/src/activation/activation_test.h
-	gcc $< -o $@ $(OBJECT_COMPILER_ARGS)
+	gcc $(OBJECT_COMPILER_ARGS) $< -o $@
 
 $(OBJECTS_FOLDER)/Gen_Distribution.o: tst/src/Gen_Distribution.c src/stat/gaussian.h
-	gcc $< -o $@ $(OBJECT_COMPILER_ARGS)
+	gcc $(OBJECT_COMPILER_ARGS) $< -o $@
 
 $(OBJECTS_FOLDER)/Test_Mat.o: tst/src/linal/Test_Mat.c tst/src/linal/linal_test.h src/linal/linal.h tst/src/Testing.h
-	gcc $< -o $@ $(OBJECT_COMPILER_ARGS)
+	gcc $(OBJECT_COMPILER_ARGS) $< -o $@
 
 $(OBJECTS_FOLDER)/Test_Vector.o: tst/src/linal/Test_Vector.c tst/src/linal/linal_test.h src/linal/linal.h tst/src/Testing.h
-	gcc $< -o $@ $(OBJECT_COMPILER_ARGS)
+	gcc $(OBJECT_COMPILER_ARGS) $< -o $@
 
 $(OBJECTS_FOLDER)/Test_Relu.o: tst/src/activation/Test_Relu.c tst/src/activation/activation_test.h src/activation/activation.h
-	gcc $< -o $@ $(OBJECT_COMPILER_ARGS)
+	gcc $(OBJECT_COMPILER_ARGS) $< -o $@
 
 $(OBJECTS_FOLDER)/Test_Sigmoid.o: tst/src/activation/Test_Sigmoid.c tst/src/activation/activation_test.h src/activation/activation.h
-	gcc $< -o $@ $(OBJECT_COMPILER_ARGS)
+	gcc $(OBJECT_COMPILER_ARGS) $< -o $@
 
 $(OBJECTS_FOLDER)/Test_Softmax.o: tst/src/activation/Test_Softmax.c tst/src/activation/activation_test.h src/activation/activation.h
-	gcc $< -o $@ $(OBJECT_COMPILER_ARGS)
+	gcc $(OBJECT_COMPILER_ARGS) $< -o $@
 
 $(OBJECTS_FOLDER)/Test_Retrieval.o: tst/src/retrieval/Test_Retrieval.c tst/src/retrieval/test_retrieval.h src/retrieval/retrieval.h
-	gcc $< -o $@ $(OBJECT_COMPILER_ARGS)
+	gcc $(OBJECT_COMPILER_ARGS) $< -o $@
 
 $(OBJECTS_FOLDER)/Activation_Suite.o: tst/src/activation/Activation_Suite.c tst/src/activation/activation_test.h tst/src/Testing.h
-	gcc $< -o $@ $(OBJECT_COMPILER_ARGS)
+	gcc $(OBJECT_COMPILER_ARGS) $< -o $@
 
 $(OBJECTS_FOLDER)/Test_Gaussian.o: tst/src/stat/Test_Gaussian.c tst/src/stat/test_gaussian.h src/stat/gaussian.h
-	gcc $< -o $@ $(OBJECT_COMPILER_ARGS)
+	gcc $(OBJECT_COMPILER_ARGS) $< -o $@
 
 $(OBJECTS_FOLDER)/Test_Layer.o: tst/src/multilayer_perceptron/basic/Test_Layer.c tst/src/multilayer_perceptron/basic/test_basic.h tst/src/Testing.h src/linal/linal.h
-	gcc $< -o $@ $(OBJECT_COMPILER_ARGS)
+	gcc $(OBJECT_COMPILER_ARGS) $< -o $@
 
 $(OBJECTS_FOLDER)/Test_Network.o: tst/src/multilayer_perceptron/basic/Test_Network.c tst/src/multilayer_perceptron/basic/test_basic.h src/linal/linal.h src/multilayer_perceptron/basic/basic.h tst/src/Testing.h
-	gcc $< -o $@ $(OBJECT_COMPILER_ARGS)
+	gcc $(OBJECT_COMPILER_ARGS) $< -o $@
 
 $(OBJECTS_FOLDER)/Test_Initialization.o: tst/src/multilayer_perceptron/training/Test_Initialization.c tst/src/multilayer_perceptron/training/test_training.h src/multilayer_perceptron/training/training.h tst/src/Testing.h
-	gcc $< -o $@ $(OBJECT_COMPILER_ARGS)
+	gcc $(OBJECT_COMPILER_ARGS) $< -o $@
 
 $(OBJECTS_FOLDER)/Test_Backprop.o: tst/src/multilayer_perceptron/training/Test_Backprop.c tst\src\multilayer_perceptron\training\test_training.h tst\src\Testing.h src\multilayer_perceptron\training\training.h src\multilayer_perceptron\basic\basic.h src\activation\activation.h
-	gcc $< -o $@ $(OBJECT_COMPILER_ARGS)
-	
+	gcc $(OBJECT_COMPILER_ARGS) $< -o $@
+
+$(OBJECTS_FOLDER)/Test_Network_Retrieval.o: tst/src/retrieval/Test_Network_Retrieval.c tst/src/retrieval/test_retrieval.h src/retrieval/retrieval.h src/multilayer_perceptron/basic/basic.h
+	gcc $(OBJECT_COMPILER_ARGS) $< -o $@
+
 $(OBJECTS_FOLDER)/Gaussian_Suite.o: tst/src/stat/Gaussian_Suite.c tst/src/stat/test_gaussian.h tst/src/Testing.h
-	gcc $< -o $@ $(OBJECT_COMPILER_ARGS)
+	gcc $(OBJECT_COMPILER_ARGS) $< -o $@
 
 $(OBJECTS_FOLDER)/Linal_Suite.o: tst/src/linal/Linal_Suite.c tst/src/linal/linal_test.h tst/src/Testing.h
-	gcc $< -o $@ $(OBJECT_COMPILER_ARGS)
+	gcc $(OBJECT_COMPILER_ARGS) $< -o $@
 
 $(OBJECTS_FOLDER)/Basic_Suite.o: tst/src/multilayer_perceptron/basic/Basic_Suite.c tst/src/multilayer_perceptron/basic/test_basic.h
-	gcc $< -o $@ $(OBJECT_COMPILER_ARGS)
+	gcc $(OBJECT_COMPILER_ARGS) $< -o $@
 
 $(OBJECTS_FOLDER)/Training_Suite.o: tst/src/multilayer_perceptron/training/Training_Suite.c tst/src/multilayer_perceptron/training/test_training.h tst/src/Testing.h
-	gcc $< -o $@ $(OBJECT_COMPILER_ARGS)
+	gcc $(OBJECT_COMPILER_ARGS) $< -o $@
 
 $(OBJECTS_FOLDER)/Retrieval_Suite.o: tst/src/retrieval/Retrieval_Suite.c tst/src/retrieval/test_retrieval.h
-	gcc $< -o $@ $(OBJECT_COMPILER_ARGS)
+	gcc $(OBJECT_COMPILER_ARGS) $< -o $@
 
 build/test/test.exe: $(OBJECTS) $(OBJECTS_FOLDER)/Runner.o
-	gcc $^ -o $@ $(COMPILER_ARGS) -lm -lsqlite
+	gcc $(COMPILER_ARGS) -lm -lsqlite $^ -o $@  
 
 build/test/gen_dist.exe: $(OBJECTS) $(OBJECTS_FOLDER)/Gen_Distribution.o
-	gcc $^ -o $@ $(COMPILER_ARGS) -lm
+	gcc $(COMPILER_ARGS) -lm $^ -o $@  
 
 test: build/test/test.exe
 	$<

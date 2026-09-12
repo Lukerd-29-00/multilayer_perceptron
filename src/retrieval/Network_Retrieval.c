@@ -5,7 +5,6 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdio.h>
 
 #define SIGMOID_NAME "SIGMOID"
 #define RELU_NAME "RELU"
@@ -69,8 +68,6 @@ char *activation_to_string(Activation activation) {
         case SOFTMAX:
             return SOFTMAX_NAME;
         case NONE:
-            return NONE_NAME;
-        default:
             return NONE_NAME;
     }
 }
@@ -313,7 +310,6 @@ int insert_layer_row(const int network_id, const Layer layer, const int idx) {
     sqlite3_bind_int(insert_layer_row_stmt, 2, idx);
     sqlite3_bind_int(insert_layer_row_stmt, 3, layer.size);
     const char *activation_name = activation_to_string(layer.func);
-    printf("%s\n", activation_name);
     sqlite3_bind_text(insert_layer_row_stmt, 4, activation_name, strlen(activation_name), SQLITE_STATIC);
     int ok = sqlite3_step(insert_layer_row_stmt);
     if (ok == SQLITE_DONE) {

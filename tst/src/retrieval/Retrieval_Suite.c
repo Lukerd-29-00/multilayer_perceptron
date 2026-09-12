@@ -7,5 +7,4 @@ void test_retrieval(int *failures) {
     RUN_TEST(test_learnset_size);
     RUN_TEST(test_load);
     RUN_TEST(test_save_and_read_network);
-
 }

@@ -9,4 +9,5 @@ size_t add_training_run(Training_Run_t training_run, size_t input_values_size, s
 char *test_load();
 void setup_network_retrieval_test();
 void teardown_network_retrieval_test();
+void initialize_test_select_stmts();
 char *test_save_and_read_network();

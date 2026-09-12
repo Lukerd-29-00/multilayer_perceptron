@@ -57,6 +57,12 @@
       return enrich_error_message(error_message, test_name); \
    }
 
+#define ASSERT_STRING_EQUALS(expected_value, actual_value, test_name) \
+   error_message = assert_string_equals(expected_value, actual_value); \
+   if (error_message != NULL) { \
+      return enrich_error_message(error_message, test_name); \
+   }
+
  #define RUN_TEST(test_method) \
       error_message = test_method(); \
       if (error_message != NULL) { \
@@ -96,3 +102,5 @@ char *assert_not_null(void *actual);
 char *assert_pointer_equals(void *expected, void *actual);
 
 char *assert_activation_equals(Activation expected, Activation actual);
+
+char *assert_string_equals(const char *expected, const char *actual);

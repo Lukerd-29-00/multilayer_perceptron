@@ -7,20 +7,23 @@
 #include <stdio.h>
 sqlite3 *test_network_retrieval_conn;
 
-const char *get_network_rows = "SELECT * FROM NETWORKS";
-const char *get_layer_rows = "SELECT * FROM LAYERS ORDER BY idx";
-const char *
 
 void setup_network_retrieval_test() {
-    int ok = sqlite3_open("./tmp", &test_network_retrieval_conn);
+    int ok = sqlite3_open(":memory:", &test_network_retrieval_conn);
     if (ok != SQLITE_OK) {
         errno = sqlite3_errcode(test_network_retrieval_conn);
         return;
     }
     initialize_network_retrieval(test_network_retrieval_conn);
+    if (errno) {
+        sqlite3_close(test_network_retrieval_conn);
+    }
 }
 
 void teardown_network_retrieval_test() {
+    if (errno) {
+        printf("%s\n", sqlite3_errstr(errno));
+    }
     destroy_network_retrieval();
     sqlite3_close(test_network_retrieval_conn);
 }
@@ -53,6 +56,7 @@ char *test_save_and_read_network() {
         goto end;
     }
    
+    Network *loaded_network = read_network("test");
     if (loaded_network == NULL) {
         goto end;
     }

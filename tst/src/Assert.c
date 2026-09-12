@@ -122,3 +122,12 @@ char *assert_pointer_equals(void *expected, void *actual) {
     }
     return NULL;
 }
+
+char *assert_string_equals(const char *expected, const char *actual) {
+    if (strcmp(expected, actual)) {
+        char buf[MAX_LEN];
+        snprintf(buf, MAX_LEN, "Error: expected %s, got %s", expected, actual);
+        return build_error_message(buf);
+    }
+    return NULL;
+}

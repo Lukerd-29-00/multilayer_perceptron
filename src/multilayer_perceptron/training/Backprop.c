@@ -5,6 +5,7 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <stdbool.h>
 
 thread_local Scratchpad_t scratchpad = {.size = 0, .weight_transform = NULL, .activation_derivative = NULL};
 
@@ -26,6 +27,65 @@ void initialize_backprop(const size_t largest_size) {
     
 }
 
+Backprop_Output_t *initialize_backprop_output(Layer *layer) {
+    Backprop_Output_t *output = malloc(sizeof(Backprop_Output_t));
+    if (output == NULL) {
+        return NULL;
+    }
+    output->weight_derivs = initialize_matrix(layer->incoming_weights.height, layer->incoming_weights.width);
+    if (output->weight_derivs == NULL) {
+        free(output);
+        return NULL;
+    }
+    output->bias_derivs = malloc(sizeof(double) * layer->size);
+    if (output->bias_derivs == NULL) {
+        destroy_matrix(output->weight_derivs);
+        free(output);
+    }
+}
+
+Backprop_Output_t *initialize_backprop_outputs(Network *network) {
+    Backprop_Output_t *output = malloc(sizeof(Backprop_Output_t) * (network->layers_count - 1));
+    if (output == NULL) {
+        return NULL;
+    }
+    for (int j = 0; j < network->layers_count - 1; j++) {
+        output[j].weight_derivs = NULL;
+        output[j].bias_derivs = NULL;
+    }
+    bool failed = false;
+    int i;
+    for (i = 1; i < network->layers_count; i++) {
+        Layer layer = network->layers_array[i];
+        output[i-1].weight_derivs = initialize_matrix(layer.incoming_weights.height, layer.incoming_weights.width);
+        if (output[i-1].weight_derivs == NULL) {
+            failed = true;
+            break;
+        }
+        output[i-1].bias_derivs = malloc(sizeof(double) * layer.size);
+        if (output[i-1].bias_derivs == NULL) {
+            failed = true;
+            break;
+        }
+    }
+
+    if (failed) {
+        for (int j = 0; j < i; j++) {
+            if (output[i].weight_derivs != NULL) {
+                destroy_matrix(output[i].weight_derivs);
+            }
+            if (output[i].bias_derivs != NULL) {
+                free(output[i].bias_derivs);
+            }
+        }
+        free(output);
+        return NULL;
+    }
+    return output;
+}
+
+
+
 void teardown_backprop() {
     assert(scratchpad.activation_derivative != NULL);
     assert(scratchpad.weight_transform != NULL);
@@ -33,6 +93,20 @@ void teardown_backprop() {
     destroy_matrix(scratchpad.weight_transform);
     scratchpad.activation_derivative = NULL;
     scratchpad.weight_transform = NULL;
+}
+
+void teardown_backprop_output(Backprop_Output_t *backprop_output) {
+    free(backprop_output->bias_derivs);
+    destroy_matrix(backprop_output->weight_derivs);
+    free(backprop_output);
+}
+
+void teardown_backprop_outputs(Backprop_Output_t *backprop_outputs, size_t size) {
+    for (int i = 0; i < size; i++) {
+        free(backprop_outputs[i].bias_derivs);
+        destroy_matrix(backprop_outputs[i].weight_derivs);
+    }
+    free(backprop_outputs);
 }
 
 void mask_scratchpad_size(const size_t height, const size_t width) {

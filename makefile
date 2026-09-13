@@ -2,7 +2,7 @@ LIBRARIES = $(MAKE_C_LIBRARIES)
 COMPILER_ARGS = -I $(MAKE_C_LIBRARIES) -L $(MAKE_C_LIBRARIES) -g -mconsole -pthread -Og
 OBJECT_COMPILER_ARGS = -c $(COMPILER_ARGS)
 OBJECTS_FOLDER = build/target/objects
-OBJECTS = $(OBJECTS_FOLDER)/Matrix.o $(OBJECTS_FOLDER)/Vector.o $(OBJECTS_FOLDER)/Assert.o $(OBJECTS_FOLDER)/Test_Mat.o $(OBJECTS_FOLDER)/Test_Vector.o $(OBJECTS_FOLDER)/Relu.o $(OBJECTS_FOLDER)/Sigmoid.o $(OBJECTS_FOLDER)/Softmax.o $(OBJECTS_FOLDER)/Test_Relu.o $(OBJECTS_FOLDER)/Test_Sigmoid.o $(OBJECTS_FOLDER)/Test_Softmax.o $(OBJECTS_FOLDER)/Activation_Suite.o $(OBJECTS_FOLDER)/Linal_Suite.o $(OBJECTS_FOLDER)/Gaussian.o $(OBJECTS_FOLDER)/Test_Gaussian.o $(OBJECTS_FOLDER)/Gaussian_Suite.o $(OBJECTS_FOLDER)/Basic_Suite.o $(OBJECTS_FOLDER)/Test_Layer.o $(OBJECTS_FOLDER)/Layer.o $(OBJECTS_FOLDER)/Network.o $(OBJECTS_FOLDER)/Test_Network.o $(OBJECTS_FOLDER)/Initialization.o $(OBJECTS_FOLDER)/Test_Initialization.o $(OBJECTS_FOLDER)/Training_Suite.o $(OBJECTS_FOLDER)/Backprop.o $(OBJECTS_FOLDER)/Test_Backprop.o $(OBJECTS_FOLDER)/Retrieval.o $(OBJECTS_FOLDER)/Test_Retrieval.o $(OBJECTS_FOLDER)/Retrieval_Suite.o $(OBJECTS_FOLDER)/Network_Retrieval.o $(OBJECTS_FOLDER)/Test_Network_Retrieval.o
+OBJECTS = $(OBJECTS_FOLDER)/Matrix.o $(OBJECTS_FOLDER)/Vector.o $(OBJECTS_FOLDER)/Assert.o $(OBJECTS_FOLDER)/Test_Mat.o $(OBJECTS_FOLDER)/Test_Vector.o $(OBJECTS_FOLDER)/Relu.o $(OBJECTS_FOLDER)/Sigmoid.o $(OBJECTS_FOLDER)/Softmax.o $(OBJECTS_FOLDER)/Test_Relu.o $(OBJECTS_FOLDER)/Test_Sigmoid.o $(OBJECTS_FOLDER)/Test_Softmax.o $(OBJECTS_FOLDER)/Activation_Suite.o $(OBJECTS_FOLDER)/Linal_Suite.o $(OBJECTS_FOLDER)/Gaussian.o $(OBJECTS_FOLDER)/Test_Gaussian.o $(OBJECTS_FOLDER)/Gaussian_Suite.o $(OBJECTS_FOLDER)/Basic_Suite.o $(OBJECTS_FOLDER)/Test_Layer.o $(OBJECTS_FOLDER)/Layer.o $(OBJECTS_FOLDER)/Network.o $(OBJECTS_FOLDER)/Test_Network.o $(OBJECTS_FOLDER)/Initialization.o $(OBJECTS_FOLDER)/Test_Initialization.o $(OBJECTS_FOLDER)/Training_Suite.o $(OBJECTS_FOLDER)/Backprop.o $(OBJECTS_FOLDER)/Test_Backprop.o $(OBJECTS_FOLDER)/Retrieval.o $(OBJECTS_FOLDER)/Test_Retrieval.o $(OBJECTS_FOLDER)/Retrieval_Suite.o $(OBJECTS_FOLDER)/Network_Retrieval.o $(OBJECTS_FOLDER)/Test_Network_Retrieval.o $(OBJECTS_FOLDER)/Training.o $(OBJECTS_FOLDER)/Test_Training.o
 
 src/retrieval/retrieval.h: src/multilayer_perceptron/training/training.h
 
@@ -14,7 +14,7 @@ tst/src/activation/activation_test.h: src/activation/activation.h
 
 src/multilayer_perceptron/basic/basic.h: src/linal/linal.h
 
-src/multilayer_perceptron/training/training.h: src/multilayer_perceptron/basic/basic.h src/linal/linal.h
+src/multilayer_perceptron/training/training.h: src/multilayer_perceptron/basic/basic.h src/linal/linal.h 
 
 build:
 	python3 make_build_folder.py
@@ -52,6 +52,9 @@ $(OBJECTS_FOLDER)/Backprop.o: src\multilayer_perceptron\training\Backprop.c src\
 	gcc $(OBJECT_COMPILER_ARGS) $< -o $@
 
 $(OBJECTS_FOLDER)/Network_Retrieval.o: src/retrieval/Network_Retrieval.c src/retrieval/retrieval.h src/multilayer_perceptron/basic/basic.h
+	gcc $(OBJECT_COMPILER_ARGS) $< -o $@
+
+$(OBJECTS_FOLDER)/Training.o: src/multilayer_perceptron/training/Training.c src/multilayer_perceptron/training/training.h src/retrieval/retrieval.h src/linal/linal.h src/multilayer_perceptron/basic/basic.h src/activation/activation.h
 	gcc $(OBJECT_COMPILER_ARGS) $< -o $@
 
 $(OBJECTS_FOLDER)/Retrieval.o: src/retrieval/retrieval.c src/retrieval/retrieval.h
@@ -103,6 +106,9 @@ $(OBJECTS_FOLDER)/Test_Backprop.o: tst/src/multilayer_perceptron/training/Test_B
 	gcc $(OBJECT_COMPILER_ARGS) $< -o $@
 
 $(OBJECTS_FOLDER)/Test_Network_Retrieval.o: tst/src/retrieval/Test_Network_Retrieval.c tst/src/retrieval/test_retrieval.h src/retrieval/retrieval.h src/multilayer_perceptron/basic/basic.h
+	gcc $(OBJECT_COMPILER_ARGS) $< -o $@
+
+$(OBJECTS_FOLDER)/Test_Training.o: tst/src/multilayer_perceptron/training/Test_Training.c tst/src/multilayer_perceptron/training/test_training.h src/multilayer_perceptron/training/training.h
 	gcc $(OBJECT_COMPILER_ARGS) $< -o $@
 
 $(OBJECTS_FOLDER)/Gaussian_Suite.o: tst/src/stat/Gaussian_Suite.c tst/src/stat/test_gaussian.h tst/src/Testing.h

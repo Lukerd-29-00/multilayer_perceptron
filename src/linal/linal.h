@@ -77,3 +77,4 @@ void scale_rows_destructive(Matrix * const target, const double * const scales);
 void scale_rows(const Matrix * const restrict target, const double * const restrict scales, Matrix * const restrict output);
 void transpose(const Matrix * const restrict input, Matrix * const restrict output);
 void outer_product(const double * const restrict vector_a, size_t size_a, const double * const restrict vector_b, size_t size_b, Matrix *output_matrix);
+void scale_vec(double *vec, size_t vec_size, double scalar);

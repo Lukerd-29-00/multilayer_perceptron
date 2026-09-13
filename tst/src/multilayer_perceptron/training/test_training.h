@@ -1,3 +1,4 @@
+#include "../../../../src/multilayer_perceptron/basic/basic.h"
 
 void training_suite(int *failures);
 char *test_glorot(void);
@@ -15,3 +16,8 @@ char *test_calculate_sigmoid_primes(void);
 char *test_calculate_relu_primes(void);
 char *test_calculate_softmax_prime(void);
 char *test_update_network(void);
+
+void set_params(Network *network);
+Network *create_test_network();
+char *test_feed_forward_training();
+char *test_train_on_sample();

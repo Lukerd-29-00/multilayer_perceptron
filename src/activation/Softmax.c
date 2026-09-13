@@ -3,7 +3,7 @@
 #include "../linal/linal.h"
 #include <assert.h>
 
-void softmax(double * restrict all_values, int num_values, double * restrict output) {
+void softmax(const double * restrict all_values, int num_values, double * restrict output) {
     double denominator = 0;
     for (int i = 0; i < num_values; i++) {
         output[i] = exp(all_values[i]);

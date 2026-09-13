@@ -37,3 +37,9 @@ void outer_product(const double * const restrict vector_a, size_t size_a, const 
         }
     }
 }
+
+void scale_vec(double *vec, size_t vec_size, double scalar) {
+    for (int i = 0; i < vec_size; i++) {
+        vec[i] *= scalar;
+    }
+}

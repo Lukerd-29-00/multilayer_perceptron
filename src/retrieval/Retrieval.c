@@ -136,8 +136,6 @@ void load(const char *learnset, const size_t sample_idx, const size_t sample_siz
 }
 
 
-
-
 void load_training_run_data(int id, Training_Run_t *training_run) {
     sqlite3_bind_int(select_input_data_stmt, 1, id);
     int i = 0;

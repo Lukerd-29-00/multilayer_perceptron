@@ -20,4 +20,7 @@ void training_suite(int *failures) {
     RUN_TEST(test_calculate_relu_primes);
     RUN_TEST(test_calculate_softmax_prime);
     RUN_TEST(test_update_network);
+
+    RUN_TEST(test_feed_forward_training);
+    RUN_TEST(test_train_on_sample);
 }

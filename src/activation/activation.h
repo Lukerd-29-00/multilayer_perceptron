@@ -4,7 +4,7 @@ double relu(double x);
 double relu_prime(double x);
 double sigmoid(double x);
 double sigmoid_prime(double x);
-void softmax(double * restrict all_values, int num_values, double * restrict output);
+void softmax(const double * restrict all_values, int num_values, double * restrict output);
 void softmax_destructive(double *all_values, int num_values);
 
 /**

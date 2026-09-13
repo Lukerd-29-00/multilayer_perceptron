@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <stdbool.h>
+#include <stdio.h>
 
 thread_local Scratchpad_t scratchpad = {.size = 0, .weight_transform = NULL, .activation_derivative = NULL};
 
@@ -70,12 +71,12 @@ Backprop_Output_t *initialize_backprop_outputs(Network *network) {
     }
 
     if (failed) {
-        for (int j = 0; j < i; j++) {
-            if (output[i].weight_derivs != NULL) {
-                destroy_matrix(output[i].weight_derivs);
+        for (int j = 0; j < i-1; j++) {
+            if (output[j].weight_derivs != NULL) {
+                destroy_matrix(output[j].weight_derivs);
             }
-            if (output[i].bias_derivs != NULL) {
-                free(output[i].bias_derivs);
+            if (output[j].bias_derivs != NULL) {
+                free(output[j].bias_derivs);
             }
         }
         free(output);

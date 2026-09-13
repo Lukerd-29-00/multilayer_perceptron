@@ -5,6 +5,8 @@
 #ifndef TRAINING_TYPES
 #define TRAINING_TYPES
 
+#define FAILED_CONNECTION 1005
+
 typedef struct memo {
     double *input_values;
     double *output_values;
@@ -58,16 +60,16 @@ void initialize_layer_glorot(Layer layer);
 void initialize_layer_he(Layer layer);
 
 //Training.c Public interface
-void train(Network *network, const char *learnset, const int sample_size, const int runs);
+void train(Network *network, const char *data_file, const char *learnset, const int sample_size, const int runs);
 
 //Training.c functions
 void set_backprop_output_zero(Network *network, Backprop_Output_t *output);
 void sum_to_avg(const Network *network, Backprop_Output_t *output, size_t sample_size);
-Training_Run_t *initialize_training_runs(Network *network);
 Layer_Calcs_t *initialize_calcs(Network *network);
-void teardown_training_runs(Training_Run_t *training_runs, size_t num_layers);
+Training_Run_t *initialize_training_runs(Network *network, size_t population_size, size_t sample_count);
 void teardown_calcs(Layer_Calcs_t *calcs, size_t size);
 int sample_boundary(const int pop_size, const int sample_size, const int idx);
 void apply_activation_training(Activation func, const double * restrict transformed_vec, const size_t vector_size, double * restrict output);
 void feed_forward_training(const Network *network, double *input_values, Layer_Calcs_t *calcs);
 void train_on_sample(const Network *network, const Training_Run_t *sample, const size_t sample_size, Layer_Calcs_t *calcs, Backprop_Output_t *backprop_output, Backprop_Output_t *avg_backprop);
+void teardown_training_runs(Training_Run_t *training_runs, size_t population_size, size_t sample_count);

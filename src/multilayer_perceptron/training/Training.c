@@ -6,14 +6,16 @@
 #include "training.h"
 #include <stdlib.h>
 #include <stdbool.h>
+#include <stdio.h>
+#include <string.h>
 
 void set_backprop_output_zero(Network *network, Backprop_Output_t *output) {
-    for (int i = 0; i < network->layers_count; i++) {
-        for (int j = 0; i < network->layers_array[i].size; i++) {
+    for (int i = 0; i < network->layers_count - 1; i++) {
+        for (int j = 0; j < network->layers_array[i+1].size; j++) {
             output[i].bias_derivs[j] = 0;
         }
 
-        for (int j = 0; j < network->layers_array[i].incoming_weights.height * network->layers_array[i].incoming_weights.width; j++) {
+        for (int j = 0; j < network->layers_array[i+1].incoming_weights.height * network->layers_array[i+1].incoming_weights.width; j++) {
             output[i].weight_derivs->values[j] = 0;
         }
     }
@@ -21,31 +23,32 @@ void set_backprop_output_zero(Network *network, Backprop_Output_t *output) {
 }
 
 void sum_to_avg(const Network *network, Backprop_Output_t *output, size_t sample_size) {
-    for (int i = 0; i < network->layers_count; i++) {
+    for (int i = 0; i < network->layers_count - 1; i++) {
         scale_matrix(output[i].weight_derivs, 1./sample_size);
-        scale_vec(output[i].bias_derivs, network->layers_array[i].size, 1./sample_size);
+        scale_vec(output[i].bias_derivs, network->layers_array[i+1].size, 1./sample_size);
     }
 }
 
-Training_Run_t *initialize_training_runs(Network *network) {
-    Training_Run_t *output = malloc(network->layers_count * sizeof(Training_Run_t));
+Training_Run_t *initialize_training_runs(Network *network, size_t population_size, size_t sample_count) {
+    size_t sample_size = (population_size / sample_count) + 1;
+    Training_Run_t *output = malloc(sample_size * sizeof(Training_Run_t));
     if (output == NULL) {
         return NULL;
     }
-    for (int j = 0; j < network->layers_count; j++) {
+    for (int j = 0; j < sample_size; j++) {
         output[j].input_values = NULL;
         output[j].correct_answer = NULL;
     }
 
     bool failed = false;
     int i;
-    for (i = 0; i < network->layers_count; i++) {
-        output[i].input_values = malloc(sizeof(double) * network->layers_array[i].size);
+    for (i = 0; i < sample_size; i++) {
+        output[i].input_values = malloc(sizeof(double) * network->layers_array[0].size);
         if (output[i].input_values == NULL) {
             failed = true;
             break;
         }
-        output[i].correct_answer = malloc(sizeof(double) * network->layers_array[i].size);
+        output[i].correct_answer = malloc(sizeof(double) * network->layers_array[network->layers_count - 1].size);
         if (output[i].correct_answer == NULL) {
             failed = true;
             break;
@@ -103,11 +106,14 @@ Layer_Calcs_t *initialize_calcs(Network *network) {
             }
         }
         free(calcs);
+        return NULL;
     }
+    return calcs;
 }
 
-void teardown_training_runs(Training_Run_t *training_runs, size_t num_layers) {
-    for (int i = 0; i < num_layers; i++) {
+void teardown_training_runs(Training_Run_t *training_runs, size_t population_size, size_t sample_count) {
+    int sample_size = (population_size / sample_count) + 1;
+    for (int i = 0; i < sample_size; i++) {
         free(training_runs[i].input_values);
         free(training_runs[i].correct_answer);
     }
@@ -122,8 +128,8 @@ void teardown_calcs(Layer_Calcs_t *calcs, size_t size) {
     free(calcs);
 }
 
-int sample_boundary(const int pop_size, const int sample_size, const int idx) {
-    return ((idx % sample_size) * pop_size) / sample_size;
+int sample_boundary(const int pop_size, const int sample_count, const int idx) {
+    return ((idx % sample_count) * pop_size) / sample_count;
 }
 
 void apply_activation_training(Activation func, const double * restrict transformed_vec, const size_t vector_size, double * restrict output) {
@@ -148,8 +154,9 @@ void apply_activation_training(Activation func, const double * restrict transfor
 }
 
 void feed_forward_training(const Network *network, double *input_values, Layer_Calcs_t *calcs) {
-    calcs[0].input_values = input_values;
-    calcs[0].output_values = input_values;
+    size_t first_layer_size = network->layers_array[0].size;
+    memcpy(calcs[0].input_values, input_values, sizeof(double) * first_layer_size);
+    memcpy(calcs[0].output_values, input_values, sizeof(double) * first_layer_size);
     for (int i = 1; i < network->layers_count; i++) {
         Layer layer = network->layers_array[i];
         transform(&layer.incoming_weights, calcs[i-1].output_values, calcs[i].input_values);
@@ -170,18 +177,32 @@ void train_on_sample(const Network *network, const Training_Run_t *sample, const
     sum_to_avg(network, avg_backprop, sample_size);
 }
 
-void train(Network *network, const char *learnset, const int sample_size, const int runs) {
-    initialize_backprop(network->largest_layer_size);
-    if (errno) {
-        return;
-    }
+void train(Network *network, const char *data_file, const char *learnset, const int sample_count, const int runs) {
     Training_Run_t *sample = NULL;
     Layer_Calcs_t *calcs = NULL;
     Backprop_Output_t *outputs = NULL;
     Backprop_Output_t *avg = NULL;
+    sqlite3 *conn = NULL;
+
+    initialize_backprop(network->largest_layer_size);
+    if (errno) {
+        goto end;
+    }
+
+    int ok = sqlite3_open(data_file, &conn);
+    if (ok != SQLITE_OK) {
+        errno = FAILED_CONNECTION;
+        conn = NULL;
+        goto end;
+    }
+
+    initialize_retrieval(conn);
+    if (errno) {
+        goto end;
+    }
 
     int population_size = learnset_size(learnset);
-    sample = initialize_training_runs(network);
+    sample = initialize_training_runs(network, population_size, sample_count);
     if (sample == NULL) {
         goto end;
     }
@@ -201,11 +222,10 @@ void train(Network *network, const char *learnset, const int sample_size, const 
     initialize_for_training(network);
     for (int i = 0; i < runs; i++) {
         set_backprop_output_zero(network, avg);
-        int current_boundary = sample_boundary(population_size, sample_size, idx + 1);
-        int next_boundary = sample_boundary(population_size, sample_size, idx + 1);
-        
+        int current_boundary = sample_boundary(population_size, sample_count, idx);
+        int next_boundary = sample_boundary(population_size, sample_count, idx + 1);
         if (next_boundary == 0) {
-            next_boundary = sample_size;
+            next_boundary = population_size;
         }
         int this_sample_size = next_boundary - current_boundary;
         load(learnset, current_boundary, this_sample_size, sample);
@@ -224,10 +244,14 @@ void train(Network *network, const char *learnset, const int sample_size, const 
         teardown_calcs(calcs, network->layers_count);
     }
     if (sample != NULL) {
-        teardown_training_runs(sample, network->layers_count);
+        teardown_training_runs(sample, population_size, sample_count);
     }
     if (avg != NULL) {
         teardown_backprop_outputs(avg, network->layers_count - 1);
     }
+    stop_retrieval();
     teardown_backprop();
+    if (conn != NULL) {
+        sqlite3_close(conn);
+    }
 }

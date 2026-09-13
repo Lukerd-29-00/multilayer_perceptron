@@ -1,10 +1,13 @@
 import sqlite3
-import os
+import argparse
 
+parser = argparse.ArgumentParser()
 
-database_file = os.environ.get("TRAINING_DATA_FILE")
+file = parser.add_argument("db_file")
 
-assert database_file is not None
+args = parser.parse_args()
+
+database_file = args.db_file
 
 with sqlite3.connect(database_file) as conn:
 

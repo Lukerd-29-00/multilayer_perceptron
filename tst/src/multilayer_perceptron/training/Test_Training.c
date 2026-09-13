@@ -48,16 +48,16 @@ char *test_feed_forward_training() {
     ASSERT_DOUBLE(2, calcs[0].output_values[1], 0.01, "test training feed forward");
 
     ASSERT_DOUBLE(1, calcs[1].input_values[0], 0.01, "test training feed forward");
-    ASSERT_DOUBLE(7.25, calcs[1].input_values[1], 0.01, "test training feed forward");
+    ASSERT_DOUBLE(5.5, calcs[1].input_values[1], 0.01, "test training feed forward");
 
     ASSERT_DOUBLE(0.7310585786300049, calcs[1].output_values[0], 0.01, "test training feed forward");
-    ASSERT_DOUBLE(0.9992903296008995, calcs[1].output_values[1], 0.01, "test training feed forward");
+    ASSERT_DOUBLE(0.995929862284104, calcs[1].output_values[1], 0.01, "test training feed forward");
 
-    ASSERT_DOUBLE(-0.49964516, calcs[2].input_values[0], 0.01, "test training feed forward");
-    ASSERT_DOUBLE(-4.09516853, calcs[2].input_values[1], 0.01, "test training feed forward");
+    ASSERT_DOUBLE(-0.49796493, calcs[2].input_values[0], 0.01, "test training feed forward");
+    ASSERT_DOUBLE(-3.22495337, calcs[2].input_values[1], 0.01, "test training feed forward");
 
-    ASSERT_DOUBLE(0.9732868623477607, calcs[2].output_values[0], 0.01, "test training feed forward");
-    ASSERT_DOUBLE(0.026713137652239257, calcs[2].output_values[1], 0.01, "test training feed forward");
+    ASSERT_DOUBLE(0.93860051, calcs[2].output_values[0], 0.01, "test training feed forward");
+    ASSERT_DOUBLE(0.06139949, calcs[2].output_values[1], 0.01, "test training feed forward");
 
 }
 
@@ -72,6 +72,7 @@ char *test_train_on_sample() {
     if (network == NULL) {
         goto end;
     }
+    initialize_backprop(network->largest_layer_size);
     calcs = initialize_calcs(network);
     if (calcs == NULL) {
         goto end;
@@ -117,6 +118,7 @@ char *test_train_on_sample() {
 
     end:
     if (network != NULL) {
+        teardown_backprop();
         destroy_network(network);
     }
     if (calcs != NULL) {

@@ -126,11 +126,17 @@ $(OBJECTS_FOLDER)/Training_Suite.o: tst/src/multilayer_perceptron/training/Train
 $(OBJECTS_FOLDER)/Retrieval_Suite.o: tst/src/retrieval/Retrieval_Suite.c tst/src/retrieval/test_retrieval.h
 	gcc $(OBJECT_COMPILER_ARGS) $< -o $@
 
+$(OBJECTS_FOLDER)/Train_And_Gate.o: src/multilayer_perceptron/and_gate/Train_And_Gate.c src/multilayer_perceptron/basic/basic.h src/multilayer_perceptron/training/training.h src/retrieval/retrieval.h
+	gcc $(OBJECT_COMPILER_ARGS) $< -o $@
+
 build/test/test.exe: $(OBJECTS) $(OBJECTS_FOLDER)/Runner.o
 	gcc $(COMPILER_ARGS) -lm -lsqlite $^ -o $@  
 
 build/test/gen_dist.exe: $(OBJECTS) $(OBJECTS_FOLDER)/Gen_Distribution.o
 	gcc $(COMPILER_ARGS) -lm $^ -o $@  
+
+build/target/and_gate.exe: $(OBJECTS) $(OBJECTS_FOLDER)/Train_And_Gate.o
+	gcc $(COMPILER_ARGS) -lm -lsqlite $^ -o $@  
 
 test: build/test/test.exe
 	$<
@@ -140,3 +146,9 @@ test-debug: build/test/test.exe
 
 gen_dist: build/test/gen_dist.exe
 	$<
+
+train_and_gate: build/target/and_gate.exe
+	$<
+
+train_and_gate-debug: build/target/and_gate.exe
+	gdb $<

@@ -20,7 +20,7 @@ void initialize_retrieval(sqlite3 *input_retrieval_conn) {
     int ok = sqlite3_prepare_v2(
         retrieval_conn,
         learnset_size_q,
-        128,
+        1024,
         &learnset_size_stmt,
         NULL
     );
@@ -32,7 +32,7 @@ void initialize_retrieval(sqlite3 *input_retrieval_conn) {
     ok = sqlite3_prepare_v2(
         retrieval_conn,
         sample,
-        128,
+        1024,
         &sample_stmt,
         NULL
     );
@@ -45,7 +45,7 @@ void initialize_retrieval(sqlite3 *input_retrieval_conn) {
     ok = sqlite3_prepare_v2(
         retrieval_conn,
         select_input_data,
-        128,
+        1024,
         &select_input_data_stmt,
         NULL
     );
@@ -59,7 +59,7 @@ void initialize_retrieval(sqlite3 *input_retrieval_conn) {
     ok = sqlite3_prepare_v2(
         retrieval_conn,
         select_output_data,
-        128,
+        1024,
         &select_output_data_stmt,
         NULL
     );

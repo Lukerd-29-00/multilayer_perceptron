@@ -219,7 +219,6 @@ void train(Network *network, const char *data_file, const char *learnset, const 
         goto end;
     }
     int idx = 0;
-    initialize_for_training(network);
     for (int i = 0; i < runs; i++) {
         set_backprop_output_zero(network, avg);
         int current_boundary = sample_boundary(population_size, sample_count, idx);

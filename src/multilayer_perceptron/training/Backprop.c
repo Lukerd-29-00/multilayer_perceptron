@@ -193,7 +193,7 @@ void calculate_softmax_prime(const double * const restrict input_values, const d
     softmax_prime(input_values, scratchpad.weight_transform);
 
     for (int i = 0; i < count; i++) {
-        scratchpad.activation_derivative[i] = 2 * (input_values[i] - real_values[i]);
+        scratchpad.activation_derivative[i] = 2 * (real_values[i] - input_values[i]);
     }
 
     transform(scratchpad.weight_transform, scratchpad.activation_derivative, derivs);
